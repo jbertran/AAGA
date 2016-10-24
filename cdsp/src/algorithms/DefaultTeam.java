@@ -18,19 +18,16 @@ public class DefaultTeam {
 		ArrayList<Point> MIS;
 		// MIS = computeMIS(points);
 		MIS = computeMISRand(points);
-		// MIS = greedy(points);
-		// MIS = tripleRand(points);
-		// MIS = greedyRand(points);
 		System.out.println("Size : " + MIS.size()) ;
 		
 		ArrayList<Point> blue;
-		// blue = algorithmA(MIS, points);
-		blue = MIS;
+		blue = algorithmA(MIS, points);
+		//blue = MIS;
 		System.out.println("AlgoA : " + blue.size());
 		
 		ArrayList<Point> OPT;
-		//OPT = localSearch(blue, points);
-		OPT = blue;
+		OPT = localSearch(blue, points);
+		//OPT = blue;
 
 		System.out.println("Final : " + OPT.size());
 		return OPT;
@@ -207,6 +204,32 @@ public class DefaultTeam {
 				CDScpy.remove(p);
 				if (isValide(CDScpy, points))
 					continue out;
+				CDScpy.add(p);
+			}
+			break;
+		}
+		
+		out: while (true) {
+			CDS = new ArrayList<>(CDScpy);
+			
+			System.out.println("Size : " + CDS.size());
+			
+			for (Point p : CDS) {
+				CDScpy.remove(p);
+				for (Point q : CDS) {
+					if (p.equals(q)) continue;
+					if (p.distance(q) > 3 * threshold) continue;
+					CDScpy.remove(q);
+					for (Point r : points) {
+						if (r.equals(p) || r.equals(q)) continue;
+						if (r.distance(p) > 3 * threshold || r.distance(q) > 3 * threshold) continue;
+						CDScpy.add(r);
+						if (isValide(CDScpy, points))
+							continue out;
+						CDScpy.remove(r);
+					}
+					CDScpy.add(q);
+				}
 				CDScpy.add(p);
 			}
 			break;
