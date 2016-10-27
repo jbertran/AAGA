@@ -8,16 +8,13 @@ import java.util.HashMap;
 public class DefaultTeam {
 	
 	int threshold;
-	HashMap<Point, ArrayList<Point>> neighbors;
-	HashMap<Point, ArrayList<Point>> neighborsCDS;
 	
 	public ArrayList<Point> calculConnectedDominatingSet(ArrayList<Point> points, int edgeThreshold) {
 		this.threshold = edgeThreshold;
-		neighbors = initNeighbors(points);
 		
 		ArrayList<Point> MIS;
-		// MIS = computeMIS(points);
-		MIS = computeMISRand(points);
+		//MIS = computeMIS(points);
+		MIS = computeMISrand(points);
 		System.out.println("Size : " + MIS.size()) ;
 		
 		ArrayList<Point> blue;
@@ -26,48 +23,55 @@ public class DefaultTeam {
 		System.out.println("AlgoA : " + blue.size());
 		
 		ArrayList<Point> OPT;
-		OPT = localSearch(blue, points);
-		//OPT = blue;
+		//OPT = localSearch(blue, points);
+		OPT = blue;
 
 		System.out.println("Final : " + OPT.size());
 		return OPT;
 	}
 
-	public ArrayList<Point> computeMIS (ArrayList<Point> points) {
+	public ArrayList<Point> computeMIS (ArrayList<Point> pts) {
 		ArrayList<Point> MIS = new ArrayList<>();
-
-		for (Point p : points) {
-			boolean flag = true;
-			for (Point q : MIS)
-				if (p.distance(q) <= threshold) {
-					flag = false;
-					break;
+		
+		ArrayList<ColoredPoint> points = new ArrayList<>();
+		for (Point p : pts) 
+			points.add(new ColoredPoint(p, Color.White));
+		
+		ArrayList<ColoredPoint> stack = new ArrayList<>();
+		stack.add(points.get(0));
+		
+		while (!stack.isEmpty()) {
+			ColoredPoint curr = stack.remove(0);
+			if (curr.color == Color.Blue)
+				continue;
+			curr.color = Color.Black;
+			MIS.add(curr);
+			
+			for (ColoredPoint p : points) {
+				if (p.distance(curr) <= threshold) {
+					p.color = Color.Blue;
 				}
-			if (flag)
-				MIS.add(p);
+			}
+			for (ColoredPoint p : points) {
+				if (p.distance(curr) <= threshold) {
+					for (ColoredPoint q : points) {
+						if (q.color == Color.White && q.distance(p) <= threshold &&
+								! stack.contains(q)) {
+							stack.add(q);
+						}
+					}
+				}
+			}
 		}
-
+		
 		return MIS;
+	}
+	public ArrayList<Point> computeMISrand (ArrayList<Point> pts) {
+		ArrayList<Point> points = new ArrayList<Point>(pts);
+		Collections.shuffle(points);
+		return computeMIS(points);
 	}
 	
-	public ArrayList<Point> computeMISRand (ArrayList<Point> points) {
-		ArrayList<Point> MIS = new ArrayList<>();
-		Collections.shuffle(points);
-		
-		
-		for (Point p : points) {
-			boolean flag = true;
-			for (Point q : MIS)
-				if (p.distance(q) <= threshold) {
-					flag = false;
-					break;
-				}
-			if (flag)
-				MIS.add(p);
-		}
-
-		return MIS;
-	}
 
 	public ArrayList<Point> algorithmA (ArrayList<Point> MIS, ArrayList<Point> points) {
 		ArrayList<ColoredPoint> UDG  = new ArrayList<>();
@@ -83,17 +87,17 @@ public class DefaultTeam {
 				grey.add(q)                                      ;
 			}
 	
-		
 		for (int i = 5; i > 1; i--) {
-			//out: while (true) {
+			out: while (true) {
+				ArrayList<ArrayList<ColoredPoint>> blueBlackComponents = getBlueBlackComponents(UDG); 
+				System.out.println("size : " + blueBlackComponents.size());
 				for (ColoredPoint p : UDG) {
-					ArrayList<ArrayList<ColoredPoint>> blueBlackComponents = getBlueBlackComponents(UDG); 
 					if (p.color != Color.Grey)
 						continue;
 					int j = 0;
 					for (ArrayList<ColoredPoint> comp : blueBlackComponents) {
 						for (ColoredPoint q : comp) {
-							if (q.distance(p) <= threshold) {
+							if (q.color == Color.Black && q.distance(p) <= threshold) {
 								j++;
 								break;
 							}
@@ -101,11 +105,12 @@ public class DefaultTeam {
 					}
 					if (j >= i) {
 						p.color = Color.Blue;
-						//continue out;
+						blueBlackComponents = getBlueBlackComponents(UDG);
+						continue out;
 					}
 				}
-			//	break;
-			//}
+				break;
+			}
 		}
 
 		ArrayList<Point> res = new ArrayList<>();
@@ -118,7 +123,11 @@ public class DefaultTeam {
 	
 	public ArrayList<ArrayList<ColoredPoint>> getBlueBlackComponents (ArrayList<ColoredPoint> pts) {
 		ArrayList<ArrayList<ColoredPoint>> res = new ArrayList<>();
-		ArrayList<ColoredPoint> points = new ArrayList<>(pts);
+		ArrayList<ColoredPoint> points = new ArrayList<>();
+		for (ColoredPoint p : pts) {
+			if (p.color == Color.Blue || p.color == Color.Black)
+				points.add(p);
+		}
 		
 		ArrayList<ColoredPoint> stack = new ArrayList<>();
 		
@@ -128,35 +137,18 @@ public class DefaultTeam {
 			
 			while (! stack.isEmpty()) {
 				ColoredPoint p = stack.remove(0);
-				if (p.color == Color.Grey)
-					continue;
-				if (p.color == Color.Black)
-					currentComponent.add(p);
-				for (ColoredPoint q : neighbors(points, p))
-					if (! currentComponent.contains(q) && ! stack.contains(q) && ! (q.color == Color.Blue && p.color == Color.Blue)) {
+				currentComponent.add(p);
+				for (ColoredPoint q : neighbors(points, p)) {
+					if (! currentComponent.contains(q) && ! (q.color == Color.Blue && p.color == Color.Blue)) {
 						stack.add(q);
 						points.remove(q);
 					}
-				
+				}
 			}
 			res.add(currentComponent);
 		}		
 		
 		return res;
-	}
-	
-	public HashMap<Point, ArrayList<Point>> initNeighbors (ArrayList<Point> points) {
-		HashMap<Point, ArrayList<Point>> h = new HashMap<>();
-		
-		for (Point p : points) {
-			ArrayList<Point> neigh = new ArrayList<>();
-			for (Point q : points) {
-				if (p.distance(q) <= threshold) 
-					neigh.add(q);
-			}
-			h.put(p, neigh);
-		}
-		return h;
 	}
 	
 	
@@ -194,8 +186,6 @@ public class DefaultTeam {
 	public ArrayList<Point> localSearch (ArrayList<Point> CDSin, ArrayList<Point> points) {
 		ArrayList<Point> CDS;
 		ArrayList<Point> CDScpy = new ArrayList<>(CDSin);
-		
-		neighborsCDS = initNeighbors(CDSin);
 		
 		out: while (true) {
 			CDS = new ArrayList<>(CDScpy);
@@ -244,7 +234,7 @@ public class DefaultTeam {
 		
 
 		for (Point p : CDScpy) {
-			for (Point q : neighbors.get(p))
+			for (Point q : neighbors(points,p))
 			// for (Point q : neighbors(points, p))
 				notCovered.remove(q);
 		}
