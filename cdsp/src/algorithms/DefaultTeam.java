@@ -8,34 +8,42 @@ import java.util.HashMap;
 public class DefaultTeam {
 	
 	int threshold;
-	
-	public ArrayList<Point> calculConnectedDominatingSet(ArrayList<Point> points, int edgeThreshold) {
+	HashMap<Point, ArrayList<Point>> neighbors = null;
+	HashMap<ColoredPoint, ArrayList<ColoredPoint>> colneighbors = null;
+
+	public ArrayList<Point> calculConnectedDominatingSet(ArrayList<Point> pts, int edgeThreshold) {
 		this.threshold = edgeThreshold;
-		
-		ArrayList<Point> MIS;
+
+		ArrayList<ColoredPoint> points = new ArrayList<>();
+		for (Point p : pts)
+			points.add(new ColoredPoint(p, Color.White));
+
+
+		ArrayList<ColoredPoint> MIS;
 		//MIS = computeMIS(points);
 		MIS = computeMISrand(points);
 		System.out.println("Size : " + MIS.size()) ;
 		
-		ArrayList<Point> blue;
+		ArrayList<ColoredPoint> blue;
 		blue = algorithmA(MIS, points);
 		//blue = MIS;
 		System.out.println("AlgoA : " + blue.size());
 		
-		ArrayList<Point> OPT;
+		ArrayList<ColoredPoint> OPT;
 		//OPT = localSearch(blue, points);
 		OPT = blue;
 
 		System.out.println("Final : " + OPT.size());
-		return OPT;
+
+		ArrayList<Point> pointlist = new ArrayList<>();
+		for (ColoredPoint p : OPT)
+			pointlist.add(p);
+
+		return pointlist;
 	}
 
-	public ArrayList<Point> computeMIS (ArrayList<Point> pts) {
-		ArrayList<Point> MIS = new ArrayList<>();
-		
-		ArrayList<ColoredPoint> points = new ArrayList<>();
-		for (Point p : pts) 
-			points.add(new ColoredPoint(p, Color.White));
+	public ArrayList<ColoredPoint> computeMIS (ArrayList<ColoredPoint> points) {
+		ArrayList<ColoredPoint> MIS = new ArrayList<>();
 		
 		ArrayList<ColoredPoint> stack = new ArrayList<>();
 		stack.add(points.get(0));
@@ -66,31 +74,31 @@ public class DefaultTeam {
 		
 		return MIS;
 	}
-	public ArrayList<Point> computeMISrand (ArrayList<Point> pts) {
-		ArrayList<Point> points = new ArrayList<Point>(pts);
+	public ArrayList<ColoredPoint> computeMISrand (ArrayList<ColoredPoint> pts) {
+		ArrayList<ColoredPoint> points = new ArrayList<>(pts);
 		Collections.shuffle(points);
 		return computeMIS(points);
 	}
 	
 
-	public ArrayList<Point> algorithmA (ArrayList<Point> MIS, ArrayList<Point> points) {
+	public ArrayList<ColoredPoint> algorithmA (ArrayList<ColoredPoint> MIS, ArrayList<ColoredPoint> points) {
 		ArrayList<ColoredPoint> UDG  = new ArrayList<>();
 		ArrayList<ColoredPoint> grey = new ArrayList<>();
-		
-		for (Point p : MIS) {
-			UDG.add(new ColoredPoint(p, Color.Black));	
+
+		for (ColoredPoint p : MIS) {
+			UDG.add(new ColoredPoint(p, Color.Black));
 		}
-		for (Point p : points)
+
+		for (ColoredPoint p : points)
 			if (! MIS.contains(p)) {
 				ColoredPoint q = new ColoredPoint(p, Color.Grey) ;
 				UDG.add(q)                                       ;
 				grey.add(q)                                      ;
 			}
-	
+
 		for (int i = 5; i > 1; i--) {
 			out: while (true) {
 				ArrayList<ArrayList<ColoredPoint>> blueBlackComponents = getBlueBlackComponents(UDG); 
-				System.out.println("size : " + blueBlackComponents.size());
 				for (ColoredPoint p : UDG) {
 					if (p.color != Color.Grey)
 						continue;
@@ -105,7 +113,7 @@ public class DefaultTeam {
 					}
 					if (j >= i) {
 						p.color = Color.Blue;
-						blueBlackComponents = getBlueBlackComponents(UDG);
+						// blueBlackComponents = getBlueBlackComponents(UDG);
 						continue out;
 					}
 				}
@@ -113,7 +121,7 @@ public class DefaultTeam {
 			}
 		}
 
-		ArrayList<Point> res = new ArrayList<>();
+		ArrayList<ColoredPoint> res = new ArrayList<>();
 		for (ColoredPoint p : UDG)
 			if (p.color == Color.Blue || p.color == Color.Black)
 				res.add(p);
@@ -146,7 +154,7 @@ public class DefaultTeam {
 				}
 			}
 			res.add(currentComponent);
-		}		
+		}
 		
 		return res;
 	}
@@ -229,8 +237,8 @@ public class DefaultTeam {
 	}
 	
 	public boolean isValide(ArrayList<Point> CDS, ArrayList<Point> points) {
-		ArrayList<Point> notCovered = new ArrayList<Point>(points);
-		ArrayList<Point> CDScpy     = new ArrayList<Point>(CDS);
+		ArrayList<Point> notCovered = new ArrayList<>(points);
+		ArrayList<Point> CDScpy     = new ArrayList<>(CDS);
 		
 
 		for (Point p : CDScpy) {
