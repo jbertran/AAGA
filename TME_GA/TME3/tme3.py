@@ -93,5 +93,5 @@ def collect_data(nbtrees, treesize):
 
 
 if __name__ == '__main__':
-    for i in [10, 25, 50, 75, 100, 250, 500, 750, 1000]:
+    for i in [10, 25, 50, 75, 100, 250, 500, 750, 1000, 10000]:
         collect_data(i, i)
