@@ -8,8 +8,6 @@ import java.util.HashMap;
 public class DefaultTeam {
 	
 	int threshold;
-	HashMap<Point, ArrayList<Point>> neighbors = null;
-	HashMap<ColoredPoint, ArrayList<ColoredPoint>> colneighbors = null;
 
 	public ArrayList<Point> calculConnectedDominatingSet(ArrayList<Point> pts, int edgeThreshold) {
 		this.threshold = edgeThreshold;
@@ -113,7 +111,6 @@ public class DefaultTeam {
 					}
 					if (j >= i) {
 						p.color = Color.Blue;
-						// blueBlackComponents = getBlueBlackComponents(UDG);
 						continue out;
 					}
 				}
@@ -140,7 +137,7 @@ public class DefaultTeam {
 		ArrayList<ColoredPoint> stack = new ArrayList<>();
 		
 		while (! points.isEmpty() ) {
-			ArrayList<ColoredPoint> currentComponent = new ArrayList<ColoredPoint>();
+			ArrayList<ColoredPoint> currentComponent = new ArrayList<>();
 			stack.add(points.remove(0));
 			
 			while (! stack.isEmpty()) {
@@ -158,8 +155,6 @@ public class DefaultTeam {
 		
 		return res;
 	}
-	
-	
 	
 	public ArrayList<ColoredPoint> neighbors (ArrayList<ColoredPoint> points, ColoredPoint p) {
 		ArrayList<ColoredPoint> res = new ArrayList<>();
