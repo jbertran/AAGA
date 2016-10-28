@@ -17,11 +17,11 @@ Le papier présentant l'algorithme *S-MIS* ne présente pas d'algorithme permett
 Un ensemble indépendant dans un graphe *G* = (*S*, *A*) est un sous-ensemble *D* de *S* tel que pour tout *u* ∈ *D* et *v* ∈ *D*, *uv* ∉ *A*. Le problème de calculer un ensemble indépendant maximum est NP-difficile.  
 Le MIS nécessaire au calcul du MCDS avec l'algorithme S-MIS doit de plus satisfaire une condition supplémentaire : pour tout *u* ∈ *D*, il doit exister *w* ∈ *S* tel qu'il existe *v* ∈ *D*, *v* ≠ *u* tel que *uw* ∈ *A* et *vw* ∈ *A*. Moins formellement, cela signifie qu'entre deux points apparetenant au MIS, il doit y avoir un et un seul point n'appartenant pas au MIS.
 
-<div style="text-align:center"><img src="figure1.png" />
+<div style="text-align:center"><img src="img/figure1.png" /><br>
 <i>Figure 1, un MIS valide comme base de l'algorithme S-MIS</i>
 </div>
-
-<div style="text-align:center"><img src="figure2.png" />
+<br>
+<div style="text-align:center"><img src="img/figure2.png" /><br>
 <i>Figure 2, un MIS invalide comme base de l'algorithme S-MIS</i>
 </div>
 
