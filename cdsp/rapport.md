@@ -25,7 +25,15 @@ Le MIS nécessaire au calcul du MCDS avec l'algorithme S-MIS doit de plus satisf
 <i>Figure 2, un MIS invalide comme base de l'algorithme S-MIS</i>
 </div>
 
-Les figures 1 et 2 montrent toutes les deux des MIS : tous les sommets sont soit dans le MIS soit ont un voisin dans le MIS, et aucun sommet du MIS n'a de voisin dans le MIS. Cependant, dans le second, les deux sommets du MIS sont séparés d'une distance de deux sommets tandis qu'il ne sont séparés que d'un sommet dans le premier. Par conséquent, seule la figure 1 représente un MIS valide comme base de l'algorithme S-MIS.
+Les figures 1 et 2 montrent toutes les deux des MIS : tous les sommets sont soit dans le MIS soit ont un voisin dans le MIS, et aucun sommet du MIS n'a de voisin dans le MIS. Cependant, dans le second, les deux sommets du MIS sont séparés d'une distance de deux sommets tandis qu'il ne sont séparés que d'un sommet dans le premier. Par conséquent, seule la figure 1 représente un MIS valide comme base de l'algorithme S-MIS.  
+
+Le pseudo code de l'algorithme que nous avons utilisé est le suivant :
+
+    def MIS ( G = (V,S) ) :
+	  MIS = []
+	  Stack = [V.pop]
+	  
+	  
 
 
 
