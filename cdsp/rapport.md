@@ -14,7 +14,7 @@ Le papier présentant l'algorithme *S-MIS* ne présente pas d'algorithme permett
 
 ## 1- Calcul du MIS
 
-Un ensemble indépendant dans un graphe *G* = (*S*, *A*) est un sous-ensemble *D* de *S* tel que pour tout *u* ∈ *D* et *v* ∈ *D*, *uv* ∉ *A*. Le problème de calculer un ensemble indépendant maximum est NP-difficile.  
+Un ensemble indépendant dans un graphe *G* = (*S*, *A*) est un sous-ensemble *D* de *S* tel que pour tout *u* ∈ *D* et *v* ∈ *D*, *uv* ∉ *A*. Le problème de calculer un ensemble indépendant maximum est NP-difficile. C'est donc sur une α-approximation que nous avons implémenté.  
 Le MIS nécessaire au calcul du MCDS avec l'algorithme S-MIS doit de plus satisfaire une condition supplémentaire : pour tout *u* ∈ *D*, il doit exister *w* ∈ *S* tel qu'il existe *v* ∈ *D*, *v* ≠ *u* tel que *uw* ∈ *A* et *vw* ∈ *A*. Moins formellement, cela signifie qu'entre deux points apparetenant au MIS, il doit y avoir un et un seul point n'appartenant pas au MIS.
 
 <div style="text-align:center"><img src="img/figure1.png" /><br>
@@ -27,13 +27,49 @@ Le MIS nécessaire au calcul du MCDS avec l'algorithme S-MIS doit de plus satisf
 
 Les figures 1 et 2 montrent toutes les deux des MIS : tous les sommets sont soit dans le MIS soit ont un voisin dans le MIS, et aucun sommet du MIS n'a de voisin dans le MIS. Cependant, dans le second, les deux sommets du MIS sont séparés d'une distance de deux sommets tandis qu'il ne sont séparés que d'un sommet dans le premier. Par conséquent, seule la figure 1 représente un MIS valide comme base de l'algorithme S-MIS.  
 
-Le pseudo code de l'algorithme que nous avons utilisé est le suivant :
 
-    def MIS ( G = (V,S) ) :
+### Implementation de l'algorithme de calcul du MIS
+L'algorithme utilisé pour calculer le MIS se base sur un système de couleur pour différencier les points non-visités (blancs) des points appartenant au MIS (noirs) et des points n'appartenant pas au MIS (bleus) : on part d'un point au hasard du graphe, que l'on marque noir (il est le premier point du MIS). On marque tous ses voisins bleus (il ne peuvent pas appartenir au MIS). Puis on ajoute les voisins des voisins qui sont encore blancs à la liste des points potentiellement dans le MIS. On retire le premier point de cette liste et on réitère le processus tant qu'il reste des points à examiner.  
+De manière plus pratique, le pseudo-code de cet algorithme est le suivant : 
+
+    def MIS ( G = (V,E) ) :
 	  MIS = []
+	  for (p : V) :                     # Initializing the colors.
+	    p.color = White
+	  
 	  Stack = [V.pop]
+	  while (Stack.notEmpty) :
+	    current = Stack.pop
+		if (current.color == Blue) :    # Already covered
+		  continue
+		current.color = Black           # Adding it to the MIS
+		MIS.add(current)
+	    
+		for (p : current.neighbors) :
+		  p.color == Blue               # Marking the neighbors as covered
 	  
+	    for (p : current.neighbors) :
+		  for (q : p.neighbors) :
+		    if (q.color == White) :     # Adding the neighbors of the neighbors
+			  Stack.add(q)              #  to the potential points of the MIS.
+	
+	  return MIS
 	  
+### Complexité du calcul du MIS
+
+On note *n*=|*S*|, et *m*=|*E*|.  
+
+__Initialisation__ :  
+Initialiser les couleurs des sommets requière un unique parcours des sommets, en temps linéaire en la taille de *S* : `O(n)`.  
+Pour des questions d'optimisation, on précalculera lors de l'initialisation une table d'association point-voisins qui a chaque point associera ses voisins. Cette opération est réalisable en `O(n*m)`), et permet de réaliser l'opération `neihbors` en `O(1)`.
+
+__Boucle principale__ :  
+Le pseudo-code précédemment donné est une version simplifié de l'algorithme réel pour des raisons de lisibilité, en particulier, dans une vrai implémentation un point n'est ajouté à la stack que si il n'y est pas déjà et si il est blanc. En tenant compte de cette condition, et en constatant qu'il y a autant d'itération de la boucle principale qu'il y a d'éléments qui sont ajoutés dans la stack lors de l'execution de l'algorithme, et vu qu'un sommet blanc enlevé de la Stack est marqué noir, on en conclue que le nombre d'itéreation de cette boucle est borné par *n*.  
+On a expliqué précédemment que l'opération `neighbors` est réalisable en temps constant. Le nombre de voisins d'un points cependant est uniquement bornée par *m*. Par conséquent la boucle parcourant les voisins des voisins a une complexité en `O(m*m)`.  
+La complexité de la boucle principale est donc `O(n*m*m)`.  
+
+Il convient cependant de noter que dans les instances traitées, cette limite est une sur-approximation très large. En effet, les graphes étant géométriques, la distribution des sommets aléatoire et uniforme, et le seuil *k* très inférieur à la distance entre les extrèmes du domaine de définition des sommets, le nombre d'arrête par sommets sera très inférieur à *m*.  
+Par conséquent, une complexité plus réaliste serait de l'ordre de `O(n*m)`. (Celà revient à supposer que le nombre d'arrêtes par sommets est de l'ordre de *√m*; ce chiffre dépend en réalité de la quantité de sommets, de l'air de la surface dans laquelle ils sont, et de l'uniformité de leur répartition. Dans nos test, ce chiffre *√m* est raisonnable).
 
 
 
