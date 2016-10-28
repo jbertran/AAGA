@@ -9,6 +9,16 @@ public class DefaultTeam {
 	
 	int threshold;
 
+	public DefaultTeam() {}
+
+	public DefaultTeam(int threshold) {
+		this.threshold = threshold;
+	}
+
+	public ArrayList<Point> calculConnectedDominatingSet(ArrayList<Point> pts) {
+		return calculConnectedDominatingSet(pts, this.threshold);
+	}
+
 	public ArrayList<Point> calculConnectedDominatingSet(ArrayList<Point> pts, int edgeThreshold) {
 		this.threshold = edgeThreshold;
 
