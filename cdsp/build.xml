@@ -44,7 +44,13 @@
 -->
     </java>
   </target>
-
+    <target name="data" depends="compile"
+            description="run data retrieval">
+        <echo>================ Run Object Main ================</echo>
+        <java classname="algorithms.Main"
+              classpath="${build}/:jars/*" fork="true">
+        </java>
+    </target>
   <target name="dist" depends="init,clean"
         description="Generer la distribution" >
     <!-- tout mettre dans l'archive -->
