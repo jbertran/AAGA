@@ -30,18 +30,18 @@ public class DefaultTeam {
 		ArrayList<ColoredPoint> MIS;
 		//MIS = computeMIS(points);
 		MIS = computeMISrand(points);
-		System.out.println("Size : " + MIS.size()) ;
+		// System.out.println("Size : " + MIS.size()) ;
 		
 		ArrayList<ColoredPoint> blue;
 		blue = algorithmA(MIS, points);
 		//blue = MIS;
-		System.out.println("AlgoA : " + blue.size());
+		// System.out.println("AlgoA : " + blue.size());
 		
 		ArrayList<ColoredPoint> OPT;
 		//OPT = localSearch(blue, points);
 		OPT = blue;
 
-		System.out.println("Final : " + OPT.size());
+		// System.out.println("Final : " + OPT.size());
 
 		ArrayList<Point> pointlist = new ArrayList<>();
 		for (ColoredPoint p : OPT)
@@ -215,7 +215,7 @@ public class DefaultTeam {
 		out: while (true) {
 			CDS = new ArrayList<>(CDScpy);
 			
-			System.out.println("Size : " + CDS.size());
+			// System.out.println("Size : " + CDS.size());
 			
 			for (Point p : CDS) {
 				CDScpy.remove(p);

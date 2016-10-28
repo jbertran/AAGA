@@ -7,8 +7,6 @@ import java.util.Random;
 
 public class Tester {
 
-    final int SAMPLESIZE = 50;
-
     int cloudSize;
     int xrange;
     int yrange;
@@ -58,9 +56,6 @@ public class Tester {
             HashMap<String, Long> data = instanceData(points);
             time += data.get("time");
             nodeCount += data.get("nodecount");
-            System.out.println(String.valueOf(time) +
-                    " " + String.valueOf(data.get("time")) +
-                    " " + String.valueOf(data.get("nodecount")));
         }
 
         HashMap<String, Float> res = new HashMap<>();
