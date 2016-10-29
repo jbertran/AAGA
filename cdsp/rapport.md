@@ -67,14 +67,61 @@ On a expliqué précédemment que l'opération `neighbors` est réalisable en te
 La complexité de la boucle principale est donc `O(n*m*m)`.  
 
 Il convient cependant de noter que dans les instances traitées, cette limite est une sur-approximation très large. En effet, les graphes étant géométriques, la distribution des sommets aléatoire et uniforme, et le seuil *k* très inférieur à la distance entre les extrèmes du domaine de définition des sommets, le nombre d'arrête par sommets sera très inférieur à *m*.  
-Par conséquent, une complexité plus réaliste serait de l'ordre de `O(n*m)`. (Celà revient à supposer que le nombre d'arrêtes par sommets est de l'ordre de $\sqrt{m}$; ce chiffre dépend en réalité de la quantité de sommets, de l'air de la surface dans laquelle ils sont, et de l'uniformité de leur répartition. Dans nos test, ce chiffre $\sqrt{m}$ est raisonnable).
+Par conséquent, une complexité plus réaliste serait de l'ordre de `O(n*m)`. (Celà revient à supposer que le nombre d'arrêtes par sommets est de l'ordre de $\sqrt{m}$; ce chiffre dépend en réalité de la quantité de sommets, de l'air de la surface dans laquelle ils sont, et de l'uniformité de leur répartition. Dans nos test, le nombre d'arrêtes par sommets est en effet bien plus proche de $\sqrt{m}$ que de *m*).
 
 
 
 
-## 2- Calcul du S-MIS
+## 2- Calcul du S-MIS : algorithme de Li et al.
+
+### Principe de l'algorithme
+L'algorithme se base sur un Lemme inhérent à la manière dont le MIS est construit : il faut au maximum ajouter un point pour connecter deux points. (cf les figures 1 et 2).  
+Informellement, à partir de ce Lemme, le principe de l'algorithme est de regrouper des clusters de sommets de manières greedy : on ajoute un à un les points qui permettent de regrouper le maximum de clusters.  
+L'algorithme utilise un système de couleurs pour déterminer les points apartenant au MCDS car ils appartiennent au MIS (black) ou car on les y a rajoutés (blue), et ceux dont le status est encore à déterminer (grey). Les "clusters" de sommets à reliés sont appelés *black-blue component* (car ils sont induits par des points bleus et noirs conjoints, en ignorant les connexions entre sommets bleus). Afin de les relier, on trouve les sommets gris qui sont voisins du plus de points noirs de différents clusters possible (cette affirmation est légèrement inexacte car *du plus* est en réalité *5 ou plus*, puis *4*, puis *3*, *2* et finallement *1*, car en effet, tester toutes les possibilités reviendrait à rajouter un facteur *m* dans l'algorithme alors qu'en tester *5* ne fait qu'ajouter une constante). C'est cette partie de l'algorithme qui est greedy : on ajoute les points qui sur le moment semble aider au maximum a rendre le MIS connexe.
+
+Le pseudo-code est le suivant :
+
+    # Params : MIS, le MIS calculé avec la méthode décrite précédemment,
+	#          UDG, le graphe considéré.
+	
+    def AlgorithmA (MIS, UDG) : 
+	  # Initialization
+	  for (p ∈ MIS) :
+	    p.color = black
+	  for (p ∈ UDG and p ∉ MIS) :
+	    p.color = grey
+		
+	  # Main loop
+	  for (i in 5,4,3,2) :
+	    if (∃ p ∈ UDG | p.color = grey and p is adjacent to at least i black nodes 
+		                              in different black-blue compoments ) :
+          # Then we choose p to connect those different black-blue components :
+		  p.color = blue
+		  
+	  return { p ∈ UDG | p.color = blue }
+	  
+	  # The S-SMIS is then: MIS ⋃ AlgorithmA(MIS,UDG) 
+		  
+
+### Analyse de la complexité
+
+#### Complexité spaciale
+
+Premier point, toutes les opérations de l'algorithme se font *en place*, c'est à dire sans créer de nouvelles structures, mais uniquement en travaillant sur les couleurs des sommets. Par conséquent, l'espace mémoire nécessaire à cet algorithme est uniquement l'espace utilisé pour stocker le graphe, linéaire en le nombre de sommets.  
+Quelques structures de données supplémentaires peuvent cependant s'avérer utiles, par exemple pour stocker les *black-blue components*, et pour accéder aux voisins de chaque noeuds, mais l'espace occupé restera cependant en `O(n)`.
+
+#### Complexité temporelle
 
 
+
+
+# Expérimentations
+
+
+# Discussion
+
+
+# Conclusion
 
 # Références
 
