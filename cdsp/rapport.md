@@ -95,8 +95,7 @@ def AlgorithmA (MIS, UDG) :
 	
   # Main loop
   for (i in 5,4,3,2) :
-    if ($\exists$ p $\in$ UDG | p.color = grey and p is adjacent to at least i black nodes 
-	                              in different black-blue compoments ) :
+    if ($\exists$ p $\in$ UDG | p.color = grey and p is adjacent to at least i black nodes in different black-blue compoments ) :
       # Then we choose p to connect those different black-blue components :
 	  p.color = blue
 	  
@@ -146,9 +145,8 @@ varier la connexité du graphe, nous calculons à partir du seuil de départ un 
 chaque valeur présentée ici.
 
 ```
-![Runtime de S-MIS en fonction de la densite du graphe](img/densityruntime.png)
+![Runtime de S-MIS en fonction de la densité du graphe](img/density.png)
 
-![Qualite du S-MIS en fonction de la densite du graphe](img/densityqual.png)
 ```
 
 ### Connexité du graphe géométrique
@@ -160,11 +158,11 @@ directe de ce seuil, puisqu'intuitivement réduire la connexité du graphe rédu
 nombre de noeuds à traiter, mais aussi le nombre de composantes indiquant les chemins connexes
 potentiels que l'algorithme impose de recalculer.
 
-```
-![Runtime de S-MIS en fonction de la connexite du graphe](img/connexruntime.png)
+![Runtime de S-MIS en fonction de la connexite du graphe](img/connex.png)
 
-![Qualite du S-MIS en fonction de la connexite du graphe](img/connexqual.png)
-```
+On remarque que le comportement de l'algorithme n'est pas monotone. En effet, un graphe très fortement connexe
+élimine très vite une forte quantité de noeuds des itérations suivantes de l'algorithme, là où un graphe moins 
+connexe conserve une quantité importante de noeuds pour les itérations suivantes. 
 
 ### Taille du graphe géométrique à densité égale
 
@@ -172,9 +170,7 @@ Nous varions ici les trois paramètres d'entrée pour évaluer le coût de l'aug
 du graphe 
 
 ```
-![Runtime de S-MIS en fonction de la connexite du graphe](img/sizeruntime.png)
-
-![Qualite du S-MIS en fonction de la connexite du graphe](img/sizequal.png)
+![Runtime de S-MIS en fonction de la connexite du graphe](img/size.png)
 ```
 
 # Références
