@@ -56,8 +56,9 @@ public class Tester {
             HashMap<String, Long> data = instanceData(points);
             time += data.get("time");
             nodeCount += data.get("nodecount");
+            //System.out.print("\rInstance " + String.valueOf(i+1) + "/" + String.valueOf(instanceCount));
         }
-
+        //System.out.print("\n");
         HashMap<String, Float> res = new HashMap<>();
         res.put("timeav", time/instanceCount);
         res.put("nodecountav", nodeCount/instanceCount);
