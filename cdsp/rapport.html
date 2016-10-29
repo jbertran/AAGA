@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>rapport.html</title>
+
+</head>
+
+<body>
+
+<p>Rapport sur l'algorithme de calcul d'Ensemble dominant connexe minimal présenté dans l'article <em>On greedy construction of connected dominating sets in wireless networks</em> de Li, Thai, Wang, Yi, Wan, Du, Tong, Bin, Zao, Wun, Zhou, 2005 (1).</p>
+
+<p>===</p>
+
+<h1>Introduction</h1>
+
+<p>Un ensemble dominant d'un graphe <em>G</em> = (<em>S</em>, <em>A</em>) est un sous-ensemble <em>D</em> de <em>S</em> tel que pour toute arrête <em>uv</em> ∈ <em>A</em>, <em>u</em> ∈ <em>D</em> ou <em>v</em> ∈ <em>D</em>. Le problème consistant à trouver un ensemble dominant connexe de taille minimal (MCDS) est NP-Difficile. Dans ce rapport, nous étudierons l'algortihme <em>S-MIS</em> présenté dans <em>On greedy construction of connected dominating sets in wireless networks</em> de Li, Thai, Wang, Yi, Wan, Du, Tong, Bin, Zao, Wun, Zhou, 2005, qui propose un Schema d'approximation en temps polynomial (PTAS) donnant une <em>(4.8+ln(5))</em>-approximation de la solution optimale. Nous commenceront par présenter l'algorithme, puis présenteront les résultats expérimentaux obtenus, que nous compareront avec d'autres algorithmes de résolution de ce problème. <br />
+Plus précisémment, nous étudieront cette algorithme dans le contexte des graphes géométriques. Ceux-ci sont composés d'un ensemble de sommets <em>S</em> et d'arrêtes <em>A</em> telles que <em>uv</em> ∈ <em>A</em> si et seulement si <em>distance(u,v)</em> ≤ <em>k</em>, <em>k</em> étant un seuil fixe. Nous présenteront également les générateurs aléatoires utilisés pour générer les graphes de tests.  </p>
+
+<h1>Présentation de l'algorithme</h1>
+
+<p>L'algortihme <em>S-MIS</em> consiste en deux étapes : le calcul d'un <em>Maximum Independent Set</em> (MIS), puis le calcul du MCDS. <br />
+Le papier présentant l'algorithme <em>S-MIS</em> ne présente pas d'algorithme permettant le calcul du MIS, mais suggère deux approches de calcul (2,3). Nous avons donc implémenté l'algorithme de Wan, Alzoubi et Frieder (3).</p>
+
+<h2>1- Calcul du MIS</h2>
+
+<p>Un ensemble indépendant dans un graphe <em>G</em> = (<em>S</em>, <em>A</em>) est un sous-ensemble <em>D</em> de <em>S</em> tel que pour tout <em>u</em> ∈ <em>D</em> et <em>v</em> ∈ <em>D</em>, <em>uv</em> ∉ <em>A</em>. Le problème de calculer un ensemble indépendant maximum est NP-difficile. C'est donc sur une α-approximation que nous avons implémenté. <br />
+Le MIS nécessaire au calcul du MCDS avec l'algorithme S-MIS doit de plus satisfaire une condition supplémentaire : pour tout <em>u</em> ∈ <em>D</em>, il doit exister <em>w</em> ∈ <em>S</em> tel qu'il existe <em>v</em> ∈ <em>D</em>, <em>v</em> ≠ <em>u</em> tel que <em>uw</em> ∈ <em>A</em> et <em>vw</em> ∈ <em>A</em>. Moins formellement, cela signifie qu'entre deux points apparetenant au MIS, il doit y avoir un et un seul point n'appartenant pas au MIS.</p>
+
+<div style="text-align:center"><img src="img/figure1.png" /><br>
+<i>Figure 1, un MIS valide comme base de l'algorithme S-MIS</i>
+</div>
+
+<p><br></p>
+
+<div style="text-align:center"><img src="img/figure2.png" /><br>
+<i>Figure 2, un MIS invalide comme base de l'algorithme S-MIS</i>
+</div>
+
+<p>Les figures 1 et 2 montrent toutes les deux des MIS : tous les sommets sont soit dans le MIS soit ont un voisin dans le MIS, et aucun sommet du MIS n'a de voisin dans le MIS. Cependant, dans le second, les deux sommets du MIS sont séparés d'une distance de deux sommets tandis qu'il ne sont séparés que d'un sommet dans le premier. Par conséquent, seule la figure 1 représente un MIS valide comme base de l'algorithme S-MIS.  </p>
+
+<h3>Implementation de l'algorithme de calcul du MIS</h3>
+
+<p>L'algorithme utilisé pour calculer le MIS se base sur un système de couleur pour différencier les points non-visités (blancs) des points appartenant au MIS (noirs) et des points n'appartenant pas au MIS (bleus) : on part d'un point au hasard du graphe, que l'on marque noir (il est le premier point du MIS). On marque tous ses voisins bleus (il ne peuvent pas appartenir au MIS). Puis on ajoute les voisins des voisins qui sont encore blancs à la liste des points potentiellement dans le MIS. On retire le premier point de cette liste et on réitère le processus tant qu'il reste des points à examiner. <br />
+De manière plus pratique, le pseudo-code de cet algorithme est le suivant : </p>
+
+<pre><code>def MIS ( G = (V,E) ) :
+  MIS = []
+  for (p : V) :                     # Initializing the colors.
+    p.color = White
+
+  Stack = [V.pop]
+  while (Stack.notEmpty) :
+    current = Stack.pop
+    if (current.color == Blue) :    # Already covered
+      continue
+    current.color = Black           # Adding it to the MIS
+    MIS.add(current)
+
+    for (p : current.neighbors) :
+      p.color == Blue               # Marking the neighbors as covered
+
+    for (p : current.neighbors) :
+      for (q : p.neighbors) :
+        if (q.color == White) :     # Adding the neighbors of the neighbors
+          Stack.add(q)              #  to the potential points of the MIS.
+
+  return MIS
+</code></pre>
+
+<h3>Complexité du calcul du MIS</h3>
+
+<p>On note <em>n</em>=|<em>S</em>|, et <em>m</em>=|<em>E</em>|.  </p>
+
+<p><strong>Initialisation</strong> : <br />
+Initialiser les couleurs des sommets requière un unique parcours des sommets, en temps linéaire en la taille de <em>S</em> : <code>O(n)</code>. <br />
+Pour des questions d'optimisation, on précalculera lors de l'initialisation une table d'association point-voisins qui a chaque point associera ses voisins. Cette opération est réalisable en <code>O(n*m)</code>), et permet de réaliser l'opération <code>neihbors</code> en <code>O(1)</code>.</p>
+
+<p><strong>Boucle principale</strong> : <br />
+Le pseudo-code précédemment donné est une version simplifié de l'algorithme réel pour des raisons de lisibilité, en particulier, dans une vrai implémentation un point n'est ajouté à la stack que si il n'y est pas déjà et si il est blanc. En tenant compte de cette condition, et en constatant qu'il y a autant d'itération de la boucle principale qu'il y a d'éléments qui sont ajoutés dans la stack lors de l'execution de l'algorithme, et vu qu'un sommet blanc enlevé de la Stack est marqué noir, on en conclue que le nombre d'itéreation de cette boucle est borné par <em>n</em>. <br />
+On a expliqué précédemment que l'opération <code>neighbors</code> est réalisable en temps constant. Le nombre de voisins d'un points cependant est uniquement bornée par <em>m</em>. Par conséquent la boucle parcourant les voisins des voisins a une complexité en <code>O(m*m)</code>. <br />
+La complexité de la boucle principale est donc <code>O(n*m*m)</code>.  </p>
+
+<p>Il convient cependant de noter que dans les instances traitées, cette limite est une sur-approximation très large. En effet, les graphes étant géométriques, la distribution des sommets aléatoire et uniforme, et le seuil <em>k</em> très inférieur à la distance entre les extrèmes du domaine de définition des sommets, le nombre d'arrête par sommets sera très inférieur à <em>m</em>. <br />
+Par conséquent, une complexité plus réaliste serait de l'ordre de <code>O(n*m)</code>. (Celà revient à supposer que le nombre d'arrêtes par sommets est de l'ordre de <em>√m</em>; ce chiffre dépend en réalité de la quantité de sommets, de l'air de la surface dans laquelle ils sont, et de l'uniformité de leur répartition. Dans nos test, le nombre d'arrêtes par sommets est en effet bien plus proche de <em>√m</em> que de <em>m</em>).</p>
+
+<h2>2- Calcul du S-MIS : algorithme de Li et al.</h2>
+
+<h3>Principe de l'algorithme</h3>
+
+<p>L'algorithme se base sur un Lemme inhérent à la manière dont le MIS est construit : il faut au maximum ajouter un point pour connecter deux points. (cf les figures 1 et 2). <br />
+Informellement, à partir de ce Lemme, le principe de l'algorithme est de regrouper des clusters de sommets de manières greedy : on ajoute un à un les points qui permettent de regrouper le maximum de clusters. <br />
+L'algorithme utilise un système de couleurs pour déterminer les points apartenant au MCDS car ils appartiennent au MIS (black) ou car on les y a rajoutés (blue), et ceux dont le status est encore à déterminer (grey). Les "clusters" de sommets à reliés sont appelés <em>black-blue component</em> (car ils sont induits par des points bleus et noirs conjoints, en ignorant les connexions entre sommets bleus). Afin de les relier, on trouve les sommets gris qui sont voisins du plus de points noirs de différents clusters possible (cette affirmation est légèrement inexacte car <em>du plus</em> est en réalité <em>5 ou plus</em>, puis <em>4</em>, puis <em>3</em>, <em>2</em> et finallement <em>1</em>, car en effet, tester toutes les possibilités reviendrait à rajouter un facteur <em>m</em> dans l'algorithme alors qu'en tester <em>5</em> ne fait qu'ajouter une constante). C'est cette partie de l'algorithme qui est greedy : on ajoute les points qui sur le moment semble aider au maximum a rendre le MIS connexe.</p>
+
+<p>Le pseudo-code est le suivant :</p>
+
+<pre><code># Params : MIS, le MIS calculé avec la méthode décrite précédemment,
+#          UDG, le graphe considéré.
+
+def AlgorithmA (MIS, UDG) : 
+  # Initialization
+  for (p ∈ MIS) :
+    p.color = black
+  for (p ∈ UDG and p ∉ MIS) :
+    p.color = grey
+
+  # Main loop
+  for (i in 5,4,3,2) :
+    if (∃ p ∈ UDG | p.color = grey and p is adjacent to at least i black nodes 
+                                  in different black-blue compoments ) :
+      # Then we choose p to connect those different black-blue components :
+      p.color = blue
+
+  return { p ∈ UDG | p.color = blue }
+
+  # The S-SMIS is then: MIS ⋃ AlgorithmA(MIS,UDG)
+</code></pre>
+
+<h3>Analyse de la complexité</h3>
+
+<h4>Complexité spaciale</h4>
+
+<p>Premier point, toutes les opérations de l'algorithme se font <em>en place</em>, c'est à dire sans créer de nouvelles structures, mais uniquement en travaillant sur les couleurs des sommets. Par conséquent, l'espace mémoire nécessaire à cet algorithme est uniquement l'espace utilisé pour stocker le graphe, linéaire en le nombre de sommets. <br />
+Quelques structures de données supplémentaires peuvent cependant s'avérer utiles, par exemple pour stocker les <em>black-blue components</em>, et pour accéder aux voisins de chaque noeuds, mais l'espace occupé restera cependant en <code>O(n)</code>.</p>
+
+<h4>Complexité temporelle</h4>
+
+<h1>Expérimentations</h1>
+
+<h1>Discussion</h1>
+
+<h1>Conclusion</h1>
+
+<h1>Références</h1>
+
+<ol>
+<li>Yingshu Li, My T. Thai, Feng Wang, Chih-Wei Yi, Peng-Jun Wan and Ding-Zhu Du, On greedy construction of connected dominating sets in wireless networks, 2005.</li>
+<li>Cadei M, Cheng MX, Cheng X, Du D-Z. Connected domination in ad hoc wireless networks. In Proceedings of the 6th International Conference on Computer Science and Informatics (CS&amp;I’2002), Durham, NC, USA, March, 2002.</li>
+<li>Wan P-J, Alzoubi KM, Frieder O. Distributed construction of connected dominating set in wireless ad hoc networks. In Proceedings of IEEE Infocom 2002, New York, NY, USA, June 2002.</li>
+</ol>
+
+</body>
+</html>
