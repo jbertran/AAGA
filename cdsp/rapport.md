@@ -23,11 +23,12 @@ Le MIS nécessaire au calcul du MCDS avec l'algorithme S-MIS doit de plus satisf
 ![Un MIS invalide comme base de l'algorithme S-MIS](img/fig2.png)
 
 
-Les figures 1 et 2 montrent toutes les deux des MIS : tous les sommets sont soit dans le MIS soit ont un voisin dans le MIS, et aucun sommet du MIS n'a de voisin dans le MIS. Cependant, dans le second, les deux sommets du MIS sont séparés d'une distance de deux sommets tandis qu'il ne sont séparés que d'un sommet dans le premier. Par conséquent, seule la figure 1 représente un MIS valide comme base de l'algorithme S-MIS.  
+Les figures 1 et 2 montrent toutes les deux des MIS : tous les sommets sont soit dans le MIS soit ont un voisin dans le MIS, et aucun sommet du MIS n'a de voisin dans le MIS. Cependant, dans le second, les deux sommets du MIS sont séparés d'une distance de deux sommets tandis qu'il ne sont séparés que d'un sommet dans le premier. Par conséquent, seule la figure 1 représente un MIS valide comme base de l'algorithme S-MIS.
 
 
 ### Implémentation de l'algorithme de calcul du MIS
-L'algorithme utilisé pour calculer le MIS se base sur un système de couleur pour différencier les points non-visités (blancs) des points appartenant au MIS (noirs) et des points n'appartenant pas au MIS (bleus) : on part d'un point au hasard du graphe, que l'on marque noir (il est le premier point du MIS). On marque tous ses voisins bleus (il ne peuvent pas appartenir au MIS). Puis on ajoute les voisins des voisins qui sont encore blancs à la liste des points potentiellement dans le MIS. On retire le premier point de cette liste et on réitère le processus tant qu'il reste des points à examiner.  
+L'algorithme utilisé pour calculer le MIS se base sur un système de couleur pour différencier les points non-visités (blancs) des points appartenant au MIS (noirs) et des points n'appartenant pas au MIS (bleus) : on part d'un point au hasard du graphe, que l'on marque noir (il est le premier point du MIS). On marque tous ses voisins bleus (il ne peuvent pas appartenir au MIS). Puis on ajoute les voisins des voisins qui sont encore blancs à la liste des points potentiellement dans le MIS. On retire le premier point de cette liste et on réitère le processus tant qu'il reste des points à examiner.
+
 De manière plus pratique, le pseudo-code de cet algorithme est le suivant : 
 
     def MIS ( G = (V,E) ) :
@@ -81,47 +82,100 @@ L'algorithme utilise un système de couleurs pour déterminer les points aparten
 
 Le pseudo-code est le suivant :
 
-    # Params : MIS, le MIS calculé avec la méthode décrite précédemment,
-	#          UDG, le graphe considéré.
+```
+# Params : MIS, the MIS obtained with the previously described method,
+#          UDG, the graph from which the CDS should be returned.
 	
-    def AlgorithmA (MIS, UDG) : 
-	  # Initialization
-	  for (p ∈ MIS) :
-	    p.color = black
-	  for (p ∈ UDG and p ∉ MIS) :
-	    p.color = grey
-		
-	  # Main loop
-	  for (i in 5,4,3,2) :
-	    if (∃ p ∈ UDG | p.color = grey and p is adjacent to at least i black nodes 
-		                              in different black-blue compoments ) :
-          # Then we choose p to connect those different black-blue components :
-		  p.color = blue
-		  
-	  return { p ∈ UDG | p.color = blue }
+def AlgorithmA (MIS, UDG) : 
+  # Initialization
+  for (p $\in$ MIS) :
+    p.color = black
+  for (p $\in$ UDG and p $\notin$ MIS) :
+    p.color = grey
+	
+  # Main loop
+  for (i in 5,4,3,2) :
+    if ($\exists$ p $\in$ UDG | p.color = grey and p is adjacent to at least i black nodes 
+	                              in different black-blue compoments ) :
+      # Then we choose p to connect those different black-blue components :
+	  p.color = blue
 	  
-	  # The S-SMIS is then: MIS ⋃ AlgorithmA(MIS,UDG) 
-		  
+  return { p $\in$ UDG | p.color = blue }
+	  
+  # The S-SMIS is then: MIS $\cup$ AlgorithmA(MIS,UDG) 
+```
 
 ### Analyse de la complexité
 
-#### Complexité spaciale
+#### Complexité spatiale
 
 Premier point, toutes les opérations de l'algorithme se font *en place*, c'est à dire sans créer de nouvelles structures, mais uniquement en travaillant sur les couleurs des sommets. Par conséquent, l'espace mémoire nécessaire à cet algorithme est uniquement l'espace utilisé pour stocker le graphe, linéaire en le nombre de sommets.  
 Quelques structures de données supplémentaires peuvent cependant s'avérer utiles, par exemple pour stocker les *black-blue components*, et pour accéder aux voisins de chaque noeuds, mais l'espace occupé restera cependant en `O(n)`.
 
 #### Complexité temporelle
 
+## 3- Performances
 
+### Méthode d'évalutation des performances
 
+Pour chaque opération, nous répétons un calcul de S-MIS sur des graphes aléatoires avec abscisses 
+et ordonnées des points du graphe choisies uniformément. Nous prenons 500 échantillons par mesure
+pour pallier aux éventuels cas pathologiques de graphes, qui arrivent surtout avec des tailles de
+graphes faibles ($\leq$ 250 points).
 
-# Expérimentations
+Ceci a pour conséquence de créer un graphe bien moins 'centré' que ceux rendus disponibles par 
+`supportGUI`. En conséquence l'évaluation est moins adaptée à des réseaux qui seraient centralisés 
+autour d'un pôle.
 
+### Densité du graphe géométrique à taille de graphe égale
 
-# Discussion
+Nous appelons 'densité du graphe' la densité du nuage de points initial réduit aux noeuds des 
+composantes connexes du graphe géométrique.
 
+La densité du graphe peut être variée de deux façons différentes:
 
-# Conclusion
+1. par une variation du seuil du graphe géométrique, qui a surtout pour effet de rendre le graphe
+   plus faiblement connexe mais qui n'élimine pas forcément beaucoup de noeuds du graphe
+2. par une augmentation de la densité réelle de noeuds, c'est-à-dire par une réduction de la plage
+   des abscisses et ordonnées des points du graphe à taille du nuage de points fixe, ou par une 
+   augmentation de la taille du nuage de points à seuil et plage de valeurs fixes.
+   
+Nous choisissons de modifier la taille du nuage de points, et nous examinons la qualité de 
+l'ensemble dominant connexe ainsi que le temps moyen pris pour le générer. De manière à ne pas
+varier la connexité du graphe, nous calculons à partir du seuil de départ un seuil approprié pour
+chaque valeur présentée ici.
+
+```
+![Runtime de S-MIS en fonction de la densite du graphe](img/densityruntime.png)
+
+![Qualite du S-MIS en fonction de la densite du graphe](img/densityqual.png)
+```
+
+### Connexité du graphe géométrique
+
+Nous évaluons ici l'impact de la connexité du graphe sur les performances de l'algorithme S-MIS.
+À tailles de nuage de point égales, nous comparons les impacts de modifications de seuil du graphe
+géométrique. Nous nous attendons à ce que la performance en temps de l'algorithme varie en fonction
+directe de ce seuil, puisqu'intuitivement réduire la connexité du graphe réduit non seulement le
+nombre de noeuds à traiter, mais aussi le nombre de composantes indiquant les chemins connexes
+potentiels que l'algorithme impose de recalculer.
+
+```
+![Runtime de S-MIS en fonction de la connexite du graphe](img/connexruntime.png)
+
+![Qualite du S-MIS en fonction de la connexite du graphe](img/connexqual.png)
+```
+
+### Taille du graphe géométrique à densité égale
+
+Nous varions ici les trois paramètres d'entrée pour évaluer le coût de l'augmentation de la taille
+du graphe 
+
+```
+![Runtime de S-MIS en fonction de la connexite du graphe](img/sizeruntime.png)
+
+![Qualite du S-MIS en fonction de la connexite du graphe](img/sizequal.png)
+```
 
 # Références
 

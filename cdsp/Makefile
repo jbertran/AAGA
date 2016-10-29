@@ -1,9 +1,9 @@
 .PHONY: clean all
 
-all: rapport.pdf
+all: rapport
 
-rapport: rapport.tex
-	pdflatex rapport.tex
+rapport: rapport.md
+	pandoc rapport.md -H preamble.tex -o rapport.pdf --listings
 
 clean:
 	rm -rf *.log *.out *.aux
