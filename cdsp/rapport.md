@@ -216,7 +216,7 @@ Etant donnée un graphe G = (V,E) et un ensemble S $\in$ V, un arbre de Steiner 
 En parant du MIS calculé à l'aide de l'algorithme présenté au début de ce rapport, le calcul d'un arbre de Steiner permet de connecter tous les points du MIS, ce qui produit un CDSP.  
 Cependant, calculer un arbre de Steiner NP-difficile, et notre implémentation effectue une sorte de local searching, donc sa complexité est en `O(n^3)`.  
 De plus, en partant d'un MIS, l'algorithme S-MIS fournit déjà une bonne solution pour obtenir un CDSP, et le calcul d'un arbre de Steiner permet de trouver une solution qui est uniquement quelques pourcents meilleure (environ 5% en moyenne, comme le montre la figure ?????? ).  
-Par conséquent, on peut affirmer qu'utiliser Steiner de cette manière pour trouver un CDSP est bien moins efficasse que de calcule le S-MIS à l'aide de l'algorithme de Li et al..
+Par conséquent, on peut affirmer qu'utiliser Steiner de cette manière pour trouver un CDSP est bien moins efficasse que de calculer le S-MIS à l'aide de l'algorithme de Li et al..
 
 
 ### Bilan sur les comparaisons et optimisations
@@ -226,7 +226,13 @@ L'introduction de l'aléatoire permet de trouver une solution de coup en moyenne
 Le local searching, quant à lui est à utiliser avec plus de parsimonie : sur des graphes contenant peut de points, il permettra de trouver une solution environ 20% plus optimale moyennent un temps de calcul bien plus important mais raisonnable. Mais plus le nombre de points du graphe augmente, moins cette option est envisageable car trop couteuse en temps.
 
 
-![Comparaison d'algorithmes d'ensemble dominant connexe](img/algos.png)
+![Comparaison temporelle d'algorithmes d'ensemble dominant connexe](img/algos.png)
+
+![Comparaison qualitative d'algorithmes d'ensemble dominant connexe]()
+
+La comparaison des tous ces algorithmes sur un même graphe n'est pas aisée comme on peut le constater : en effet, deux ont des complexités quasi-linéraires tandis que les deux autres sont entre quadratique et cubique. Cependant, la tendance se dégage bien : l'algorithme S-MIS (et sa version randomisée) est plus ou moins linéaire, tandis que le local searching est un peu plus que quadratique, et Steiner est quasiment cubique. Ces deux derniers ont donc des temps de calculs très supérieurs à S-MIS.  
+
+Quant à la qualité des solutions, comme expliqué précedemment, on constate que la version aléatoire de S-MIS est environ 5% meilleur, tout comme l'algorithme de calcul d'un arbre de Steiner sur le MIS. Le local searching est quant à lui environ 20% meilleur que S-MIS.
 
 
 # Conclusion
