@@ -3,12 +3,9 @@
 all: rapport
 
 rapport: rapport.md plots
-	pandoc rapport.md -H preamble.tex -o rapport.pdf --listings
+	pandoc rapport.md --variable documentclass=article --variable classoption=titlepage -H preamble.tex -o rapport.pdf --listings --number-sections --toc
 
-plots: connex density # size 
-
-density: plots/density.plt data/density.dat
-	gnuplot plots/density.plt
+plots: connex size
 
 connex: plots/connex.plt data/connex.dat
 	gnuplot plots/connex.plt

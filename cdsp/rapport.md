@@ -1,6 +1,8 @@
 %Rapport sur l'algorithme de calcul d'Ensemble dominant connexe minimal présenté dans l'article *On greedy construction of connected dominating sets in wireless networks* de Li, Thai, Wang, Yi, Wan, Du, Tong, Bin, Zao, Wun, Zhou, 2005 (1).
 %Darius Mercadier \and Jordi Bertran de Balanda
 
+\newpage
+
 # Introduction
 Un ensemble dominant d'un graphe *G* = (*S*, *A*) est un sous-ensemble *D* de *S* tel que pour toute arrête *uv* $\in$ *A*, *u* $\in$ *D* ou *v* $\in$ *D*. Le problème consistant à trouver un ensemble dominant connexe de taille minimal (MCDS) est NP-Difficile. Dans ce rapport, nous étudierons l'algortihme *S-MIS* présenté dans *On greedy construction of connected dominating sets in wireless networks* de Li, Thai, Wang, Yi, Wan, Du, Tong, Bin, Zao, Wun, Zhou, 2005, qui propose un Schema d'approximation en temps polynomial (PTAS) donnant une *(4.8+ln(5))*-approximation de la solution optimale. Nous commenceront par présenter l'algorithme, puis présenteront les résultats expérimentaux obtenus, que nous compareront avec d'autres algorithmes de résolution de ce problème.
 
@@ -13,7 +15,7 @@ L'algorithme *S-MIS* consiste en deux étapes : le calcul d'un *Maximum Independ
 
 Le papier présentant l'algorithme *S-MIS* ne présente pas d'algorithme permettant le calcul du MIS, mais suggère deux approches de calcul (2,3). Nous avons donc implémenté l'algorithme de Wan, Alzoubi et Frieder (3).
 
-## 1- Calcul du MIS
+## Calcul du MIS
 
 Un ensemble indépendant dans un graphe *G* = (*S*, *A*) est un sous-ensemble *D* de *S* tel que pour tout *u* $\in$ *D* et *v* $\in$ *D*, *uv* $\notin$ *A*. Le problème de calculer un ensemble indépendant maximum est NP-difficile. C'est donc sur une $\alpha$-approximation que nous avons implémenté.  
 Le MIS nécessaire au calcul du MCDS avec l'algorithme S-MIS doit de plus satisfaire une condition supplémentaire : pour tout *u* $\in$ *D*, il doit exister *w* $\in$ *S* tel qu'il existe *v* $\in$ *D*, *v* $\neq$ *u* tel que *uw* $\in$ *A* et *vw* $\in$ *A*. Moins formellement, cela signifie qu'entre deux points apparetenant au MIS, il doit y avoir un et un seul point n'appartenant pas au MIS.
@@ -73,7 +75,7 @@ Par conséquent, une complexité plus réaliste serait de l'ordre de `O(n*m)`. (
 
 
 
-## 2- Calcul du S-MIS : algorithme de Li et al.
+## Calcul du S-MIS : algorithme de Li et al.
 
 ### Principe de l'algorithme
 L'algorithme se base sur un Lemme inhérent à la manière dont le MIS est construit : il faut au maximum ajouter un point pour connecter deux points. (cf les figures 1 et 2).  
@@ -129,65 +131,61 @@ La boucle principale de l'algorithme est effectuée cinq fois. Dedans, on va tes
 On a donc un `O(n)` pour l'initialisation des structures, puis `O(n*m)` pour la boucle principale. La complexité temporelle de l'algorithme est donc `O(n*m)`.
 
 
-## 3- Performances
+# Performances
 
-### Méthode d'évalutation des performances
+## Méthode d'évalutation des performances
 
-Pour chaque opération, nous répétons un calcul de S-MIS sur des graphes aléatoires avec abscisses 
-et ordonnées des points du graphe choisies uniformément. Nous prenons 500 échantillons par mesure
-pour pallier aux éventuels cas pathologiques de graphes, qui arrivent surtout avec des tailles de
-graphes faibles ($\leq$ 250 points).
+Les données obtenues dans cette section sont des moyennes du calcul de S-MIS sur des graphes générés
+aléatoirement avec abscisses et ordonnées des points du graphe choisies uniformément. Nous prenons 500
+échantillons par mesure pour pallier aux éventuels cas pathologiques de graphes, qui arrivent surtout 
+avec des tailles de graphes faibles ($\leq$ 250 points).
 
 Ceci a pour conséquence de créer un graphe bien moins 'centré' que ceux rendus disponibles par 
 `supportGUI`. En conséquence l'évaluation est moins adaptée à des réseaux qui seraient centralisés 
 autour d'un pôle.
 
-### Densité du graphe géométrique à taille de graphe égale
+Nous distinguons 3 paramètres sur les points en entrée qui peuvent influer sur la performance des 
+algorithmes de calcul d'un ensemble dominant connexe.
 
-Nous appelons 'densité du graphe' la densité du nuage de points initial réduit aux noeuds des 
-composantes connexes du graphe géométrique.
+1. La densité du nuage de points par rapport à leur fourchette d'abscisse et d'ordonnées
+2. La valeur du seuil associé au graphe géométrique
+3. La taille du nuage de points à traiter, à densité égale et seuil correspondant
 
-La densité du graphe peut être variée de deux façons différentes:
+Afin de ne pas causer de changement involontaire de l'un des paramètres lors de l'analyse d'un autre,
+nous modifions les paramètres annexes.
 
-1. par une variation du seuil du graphe géométrique, qui a surtout pour effet de rendre le graphe
-   plus faiblement connexe mais qui n'élimine pas forcément beaucoup de noeuds du graphe
-2. par une augmentation de la densité réelle de noeuds, c'est-à-dire par une réduction de la plage
-   des abscisses et ordonnées des points du graphe à taille du nuage de points fixe, ou par une 
-   augmentation de la taille du nuage de points à seuil et plage de valeurs fixes.
-   
-Nous choisissons de modifier la taille du nuage de points, et nous examinons la qualité de 
-l'ensemble dominant connexe ainsi que le temps moyen pris pour le générer. De manière à ne pas
-varier la connexité du graphe, nous calculons à partir du seuil de départ un seuil approprié pour
-chaque valeur présentée ici.
+## Taille du graphe géométrique
 
-```
-![Runtime de S-MIS en fonction de la densité du graphe](img/density.png)
+### Densité et forme du graphe
 
-```
+On cherche ici à examiner l'impact de la seule augmentation de la taille du graphe sur les performances
+de l'algorithme. De manière à préserver le nombre moyen de voisins d'un noeud, on cherche à contrôler la
+'densité' du graphe en variant les plages de valeurs d'abscisses et d'ordonnées disponible pour respecter:
 
-### Connexité du graphe géométrique
+$$ d = \frac{n}{r^2}$$
+
+avec $d$ la densité du nuage de points, $n$ sa taille et $r$ la taille du carré 2D à l'intérieur duquel les
+points sont générés aléatoirement.
+
+![Runtime de S-MIS en fonction de la taille du graphe](img/size.png)
+
+Nous constatons ici que, à densité et connexité égales, l'algorithme est linéaire en la taille du nuage de
+points en entrée. 
+
+## Connexité du graphe géométrique
 
 Nous évaluons ici l'impact de la connexité du graphe sur les performances de l'algorithme S-MIS.
 À tailles de nuage de point égales, nous comparons les impacts de modifications de seuil du graphe
-géométrique. Nous nous attendons à ce que la performance en temps de l'algorithme varie en fonction
-directe de ce seuil, puisqu'intuitivement réduire la connexité du graphe réduit non seulement le
-nombre de noeuds à traiter, mais aussi le nombre de composantes indiquant les chemins connexes
-potentiels que l'algorithme impose de recalculer.
+géométrique. Nous nous attendons à ce que la performance en temps de l'algorithme varie en de manière 
+proportionnelle à ce seuil: intuitivement réduire la connexité du graphe réduit non seulement le
+nombre de noeuds à traiter en rendant certains noeuds orphelins, mais aussi le nombre de composantes
+indiquant les chemins connexes potentiels que l'algorithme impose de recalculer.
 
-![Runtime de S-MIS en fonction de la connexite du graphe](img/connex.png)
+![Runtime de S-MIS en fonction de la connexite du graphe, avec une taille de nuage fixe de $800*800$](img/connex.png)
 
-On remarque que le comportement de l'algorithme n'est pas monotone. En effet, un graphe très fortement connexe
-élimine très vite une forte quantité de noeuds des itérations suivantes de l'algorithme, là où un graphe moins 
-connexe conserve une quantité importante de noeuds pour les itérations suivantes. 
+On remarque que le comportement de l'algorithme n'est pas, comme attendu monotone. Le fait d'avoir un nombre de
+voisins moyen élevé 
 
-### Taille du graphe géométrique à densité égale
-
-Nous varions ici les trois paramètres d'entrée pour évaluer le coût de l'augmentation de la taille
-du graphe 
-
-```
-![Runtime de S-MIS en fonction de la connexite du graphe](img/size.png)
-```
 
 # Références
 

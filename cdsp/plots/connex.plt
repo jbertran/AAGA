@@ -13,6 +13,7 @@ set ylabel 'Temps (ms)'
 
 # Ranges and ticks
 set yrange [ 0: ]
+set xrange [ 2:66 ]
 set xtics 5
 
 # Plot
