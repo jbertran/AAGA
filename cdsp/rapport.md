@@ -184,8 +184,10 @@ indiquant les chemins connexes potentiels que l'algorithme impose de recalculer.
 
 ![Runtime de S-MIS en fonction de la connexite du graphe, avec une taille de nuage fixe de $800*800$](img/connex.png)
 
-On remarque que le comportement de l'algorithme n'est pas, comme attendu monotone. Le fait d'avoir un nombre de
-voisins moyen élevé 
+On remarque que le comportement de l'algorithme n'est pas, comme attendu monotone. On peut expliquer cela par la présence 
+d'un seuil à partir duquel le nombre de voisins moyen devient suffisamment grand pour que le nombre de *black-blue components*
+soit significativement réduit puisqu'un nombre important de noeuds non-visités deviennent alors voisins d'un noeud bleu à chaque
+itération. Comme vu précédemment, la complexité de l'algorithme S-MIS étant $\mathcal{O}(n*m)$, 
 
 
 ## Comparaisons
@@ -198,11 +200,11 @@ Le graphe étant stocké sous forme d'une liste chainée de points, une manière
 En calculant dix fois le CDSP sur le même set de points mais rangés dans un ordre différent plusieurs fois, et en gardant uniquement le résultat, celà permet de trouver un CDSP généralement entre 5 et 10% plus petit (cf figure ???????????????????????????? ).  
 
 
-
 ### S-MIS et local searching
 
 Le *local searching* est une technique assez simple à implémenter pour améliorer d'algorithme d'approximations pour des problèmes d'optimisation. Le nom *local searching* vient du fait que le principe est d'explorer l'espace des solutions aux environ de la solution obtenue avec de la modifier jusqu'à converger sur un extremum local.  
 Appliqué à notre problème, le *local searching* le plus basique consiste à essayer de remplacer des couples de deux points par un unique point. (On pourrait aussi essayer de remplacer trois points par deux, mais la complexité serait bien plus élevé).  
+
 Le *local searching* présente cependant un inconvenient majeur : même en choisissant des bonnes structures de données (une table de hashage pour vérifier la validité d'une solution en temps constant par exemple), sa complexité est en `O(n^3)`, soit beaucoup plus que celle de l'algorithme S-MIS.  
 Il convient de remarquer également que le *local searching*, bien que permettant d'améliorer certaines solutions, n'est pas parfait pour autant, car il est notamment assez sensible aux extremum locaux (bien qu'un peu de randomisation permet de se défaire légèrement de cet inconvénient).  
 A noter qu'en tenant compte du fait que pour qu'un point puisse en remplacer deux autres, il faut que les deux points en question soit relativement proche, on peut donc optimiser le local searching en ne considérant que les paires de points séparés d'une distance de moins de trois fois le *threshold* du graphe géométrique.  
@@ -215,6 +217,12 @@ Etant donnée un graphe G = (V,E) et un ensemble S $\in$ V, un arbre de Steiner 
 En parant du MIS calculé à l'aide de l'algorithme présenté au début de ce rapport, le calcul d'un arbre de Steiner permet de connecter tous les points du MIS, ce qui produit un CDSP.  
 Cependant, calculer un 
 
+
+### Autres algorithmes
+
+![Comparaison d'algorithmes d'ensemble dominant connexe](img/algos.png)
+
+# Conclusion
 
 # Références
 
