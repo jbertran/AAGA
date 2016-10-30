@@ -9,7 +9,7 @@ set style fill solid 1.0
 
 # Labels
 set xlabel 'Nombre de points dans le nuage'
-set ylabel 'Temps (ms)'
+set ylabel 'Temps (s)'
 
 # Plot
 plot 'data/algos.dat' u 1:2 w linespoint title 'S-MIS', 'data/algos.dat' u 1:3 w linespoint title 'Aléatoire', 'data/algos.dat' u 1:4 w linespoint title 'Local searching', 'data/algos.dat' u 1:5 w linespoint title 'Steiner'
