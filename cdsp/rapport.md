@@ -4,7 +4,7 @@
 \newpage
 
 # Introduction
-Un ensemble dominant d'un graphe *G* = (*S*, *A*) est un sous-ensemble *D* de *S* tel que pour toute arrête *uv* $\in$ *A*, *u* $\in$ *D* ou *v* $\in$ *D*. Le problème consistant à trouver un ensemble dominant connexe de taille minimal (MCDS) est NP-Difficile. Dans ce rapport, nous étudierons l'algortihme *S-MIS* présenté dans *On greedy construction of connected dominating sets in wireless networks* de Li, Thai, Wang, Yi, Wan, Du, Tong, Bin, Zao, Wun, Zhou, 2005, qui propose un Schema d'approximation en temps polynomial (PTAS) donnant une *(4.8+ln(5))*-approximation de la solution optimale. Nous commenceront par présenter l'algorithme, puis présenteront les résultats expérimentaux obtenus, que nous compareront avec d'autres algorithmes de résolution de ce problème.
+Un ensemble dominant d'un graphe *G* = (*S*, *A*) est un sous-ensemble *D* de *S* tel que pour toute arrête *uv* $\in$ *A*, *u* $\in$ *D* ou *v* $\in$ *D*. Le problème consistant à trouver un ensemble dominant connexe de taille minimal (MCDS) est NP-Difficile. Dans ce rapport, nous étudierons l'algortihme *S-MIS* présenté dans *On greedy construction of connected dominating sets in wireless networks* de Li, Thai, Wang, Yi, Wan, Du, Tong, Bin, Zao, Wun, Zhou, 2005, qui propose un Schéma d'Approximation en Temps Polynomial (PTAS) donnant une *(4.8+ln(5))*-approximation de la solution optimale. Nous commenceront par présenter l'algorithme, puis présenteront les résultats expérimentaux obtenus, que nous compareront avec d'autres algorithmes de résolution de ce problème.
 
 Plus précisémment, nous étudieront cette algorithme dans le contexte des graphes géométriques. Ceux-ci sont composés d'un ensemble de sommets *S* et d'arrêtes *A* telles que *uv* $\in$ *A* si et seulement si *distance(u,v)* $\leq$ *k*, *k* étant un seuil fixe. Nous présenteront également les générateurs aléatoires utilisés pour générer les graphes de tests.  
 
@@ -62,16 +62,16 @@ De manière plus pratique, le pseudo-code de cet algorithme est le suivant :
 On note *n*=|*S*|, et *m*=|*E*|.  
 
 __Initialisation__ :  
-Initialiser les couleurs des sommets requière un unique parcours des sommets, en temps linéaire en la taille de *S* : `O(n)`.  
-Pour des questions d'optimisation, on précalculera lors de l'initialisation une table d'association point-voisins qui a chaque point associera ses voisins. Cette opération est réalisable en `O(n^2)`), et permet de réaliser l'opération `neihbors` en `O(1)`.
+Initialiser les couleurs des sommets requière un unique parcours des sommets, en temps linéaire en la taille de *S* : $\mathcal{O}(n)$.  
+Pour des questions d'optimisation, on précalculera lors de l'initialisation une table d'association point-voisins qui a chaque point associera ses voisins. Cette opération est réalisable en $\mathcal{O}(n^2)$), et permet de réaliser l'opération `neighbors` en $\mathcal{O}(1)$.
 
 __Boucle principale__ :  
 Le pseudo-code précédemment donné est une version simplifié de l'algorithme réel pour des raisons de lisibilité, en particulier, dans une vrai implémentation un point n'est ajouté à la stack que si il n'y est pas déjà et si il est blanc. En tenant compte de cette condition, et en constatant qu'il y a autant d'itération de la boucle principale qu'il y a d'éléments qui sont ajoutés dans la stack lors de l'execution de l'algorithme, et vu qu'un sommet blanc enlevé de la Stack est marqué noir, on en conclue que le nombre d'itéreation de cette boucle est borné par *n*.  
-On a expliqué précédemment que l'opération `neighbors` est réalisable en temps constant. Le nombre de voisins d'un points cependant est uniquement bornée par *m*. Par conséquent la boucle parcourant les voisins des voisins a une complexité en `O(m*m)`.  
-La complexité de la boucle principale est donc `O(n*m*m)`.  
+On a expliqué précédemment que l'opération `neighbors` est réalisable en temps constant. Le nombre de voisins d'un points cependant est uniquement bornée par *m*. Par conséquent la boucle parcourant les voisins des voisins a une complexité en $\mathcal{O}(m*m)$.  
+La complexité de la boucle principale est donc $\mathcal{O}(n*m*m)$.  
 
 Il convient cependant de noter que dans les instances traitées, cette limite est une sur-approximation très large. En effet, les graphes étant géométriques, la distribution des sommets aléatoire et uniforme, et le seuil *k* très inférieur à la distance entre les extrèmes du domaine de définition des sommets, le nombre d'arrête par sommets sera très inférieur à *m*.  
-Par conséquent, une complexité plus réaliste serait de l'ordre de `O(n*m)`. (Celà revient à supposer que le nombre d'arrêtes par sommets est de l'ordre de $\sqrt{m}$; ce chiffre dépend en réalité de la quantité de sommets, de l'air de la surface dans laquelle ils sont, et de l'uniformité de leur répartition. Dans nos test, le nombre d'arrêtes par sommets est en effet bien plus proche de $\sqrt{m}$ que de *m*).
+Par conséquent, une complexité plus réaliste serait de l'ordre de $\mathcal{O}(n*m)$. (Celà revient à supposer que le nombre d'arrêtes par sommets est de l'ordre de $\sqrt{m}$; ce chiffre dépend en réalité de la quantité de sommets, de l'air de la surface dans laquelle ils sont, et de l'uniformité de leur répartition. Dans nos test, le nombre d'arrêtes par sommets est en effet bien plus proche de $\sqrt{m}$ que de *m*).
 
 
 
@@ -191,12 +191,12 @@ itération. Comme vu précédemment, la complexité de l'algorithme S-MIS étant
 
 # Comparaisons et optimisations
 
-### Randomization
+### Randomisation
 
 Bien que n'étant pas présenté comme un algorithme probabiliste, l'algorithme de calcul du MIS ne précise pas comment choisir le premier point du MIS ni dans quel ordre considérer les points suivants. La version que nous avons implémenté se base sur une pile FIFO, et le premier point que l'on y ajoute est le premier point de la liste des points. De même, l'algorithme S-MIS ne dit pas dans quel ordre les points doivent être considérés.  
-Une optimisation peu couteuse et facile à implémenter consiste donc à introduire de l'aléatoire dans l'odre dans lequel les points sont considérés, ce qui produira probablement un résultat différent. Cela rajoute juste une constante dans la complexité de l'algorithme. A noter que les précalcul n'ont besoin d'être fait qu'une seule fois, notamment le `O(n^2)` de l'initialisation des voisins est effectué une seule fois.  
+Une optimisation peu couteuse et facile à implémenter consiste donc à introduire de l'aléatoire dans l'odre dans lequel les points sont considérés, ce qui produira probablement un résultat différent. Cela rajoute juste une constante dans la complexité de l'algorithme. A noter que les précalcul n'ont besoin d'être fait qu'une seule fois, notamment le $\mathcal{O}(n^2)$ de l'initialisation des voisins est effectué une seule fois.  
 Le graphe étant stocké sous forme d'une liste chainée de points, une manière simple d'introduire cet aléatoire consiste à mélanger aléatoire la liste des points avant de commencer l'algorithme (effectué par la méthode `Collection.shuffle` de Java).  
-En calculant dix fois le CDSP sur le même set de points mais rangés dans un ordre différent plusieurs fois, et en gardant uniquement le résultat, celà permet de trouver un CDSP généralement entre 5 et 10% plus petit (cf figure ???????????????????????????? ).  
+En calculant dix fois le CDSP sur le même set de points mais rangés dans un ordre différent plusieurs fois, et en gardant uniquement le résultat, celà permet de trouver un CDSP généralement entre 5 et 10% plus petit (cf figure 6 ).  
 
 
 ### S-MIS et local searching
@@ -204,17 +204,17 @@ En calculant dix fois le CDSP sur le même set de points mais rangés dans un or
 Le *local searching* est une technique assez simple à implémenter pour améliorer d'algorithme d'approximations pour des problèmes d'optimisation. Le nom *local searching* vient du fait que le principe est d'explorer l'espace des solutions aux environ de la solution obtenue avec de la modifier jusqu'à converger sur un extremum local.  
 Appliqué à notre problème, le *local searching* le plus basique consiste à essayer de remplacer des couples de deux points par un unique point. (On pourrait aussi essayer de remplacer trois points par deux, mais la complexité serait bien plus élevé).  
 
-Le *local searching* présente cependant un inconvenient majeur : même en choisissant des bonnes structures de données (une table de hashage pour vérifier la validité d'une solution en temps constant par exemple), sa complexité est en `O(n^3)`, soit beaucoup plus que celle de l'algorithme S-MIS.  
+Le *local searching* présente cependant un inconvenient majeur : même en choisissant des bonnes structures de données (une table de hashage pour vérifier la validité d'une solution en temps constant par exemple), sa complexité est en $\mathcal{O}(n^3)$, soit beaucoup plus que celle de l'algorithme S-MIS.  
 Il convient de remarquer également que le *local searching*, bien que permettant d'améliorer certaines solutions, n'est pas parfait pour autant, car il est notamment assez sensible aux extremum locaux (bien qu'un peu de randomisation permet de se défaire légèrement de cet inconvénient).  
 A noter qu'en tenant compte du fait que pour qu'un point puisse en remplacer deux autres, il faut que les deux points en question soit relativement proche, on peut donc optimiser le local searching en ne considérant que les paires de points séparés d'une distance de moins de trois fois le *threshold* du graphe géométrique.  
-Néamoins, appliquer du local searching sur la solution fournie par l'algorithme S-MIS permet d'améliorer celle-là de environ 20% (cf figure ????????????? ). Au dela de quelques milliers de points, il faut cependant compter quelques minutes, voir quelques heures pour trouver des solutions.  
+Néamoins, appliquer du local searching sur la solution fournie par l'algorithme S-MIS permet d'améliorer celle-là de environ 20% (cf figure 5). Au dela de quelques milliers de points, il faut cependant compter quelques minutes, voir quelques heures pour trouver des solutions.  
 
 
 ### MIS puis Steiner
 
 Etant donnée un graphe G = (V,E) et un ensemble S $\in$ V, un arbre de Steiner est un sous-graphe de G passant par tous les poins de S, de taille minimale.  
 En parant du MIS calculé à l'aide de l'algorithme présenté au début de ce rapport, le calcul d'un arbre de Steiner permet de connecter tous les points du MIS, ce qui produit un CDSP.  
-Cependant, calculer un arbre de Steiner NP-difficile, et notre implémentation effectue une sorte de local searching, donc sa complexité est en `O(n^3)`.  
+Cependant, calculer un arbre de Steiner NP-difficile, et notre implémentation effectue une sorte de local searching, donc sa complexité est en $\mathcal{O}(n^3)$.  
 De plus, en partant d'un MIS, l'algorithme S-MIS fournit déjà une bonne solution pour obtenir un CDSP, et le calcul d'un arbre de Steiner permet de trouver une solution qui est uniquement quelques pourcents meilleure (environ 5% en moyenne, comme le montre la figure ?????? ).  
 Par conséquent, on peut affirmer qu'utiliser Steiner de cette manière pour trouver un CDSP est bien moins efficasse que de calculer le S-MIS à l'aide de l'algorithme de Li et al..
 
@@ -228,16 +228,15 @@ Le local searching, quant à lui est à utiliser avec plus de parsimonie : sur d
 
 ![Comparaison temporelle d'algorithmes d'ensemble dominant connexe](img/algos.png)
 
-![Comparaison qualitative d'algorithmes d'ensemble dominant connexe]()
+![Comparaison qualitative d'algorithmes d'ensemble dominant connexe](img/algoqual.png)
 
 La comparaison des tous ces algorithmes sur un même graphe n'est pas aisée comme on peut le constater : en effet, deux ont des complexités quasi-linéraires tandis que les deux autres sont entre quadratique et cubique. Cependant, la tendance se dégage bien : l'algorithme S-MIS (et sa version randomisée) est plus ou moins linéaire, tandis que le local searching est un peu plus que quadratique, et Steiner est quasiment cubique. Ces deux derniers ont donc des temps de calculs très supérieurs à S-MIS.  
 
 Quant à la qualité des solutions, comme expliqué précedemment, on constate que la version aléatoire de S-MIS est environ 5% meilleur, tout comme l'algorithme de calcul d'un arbre de Steiner sur le MIS. Le local searching est quant à lui environ 20% meilleur que S-MIS.
 
-
 # Conclusion
 
-L'algorithme S-MIS de Li et al. pour le calcul d'un Ensemble Dominant Connexe fournis une `1+ln(5)`-approximation dans un temps qui est en pratique quasi-linéaire. `1+ln(5)` \$simeq$ `2.6`, mais en pratique, la solution est plus proche d'une `2` ou `1.5` approximation, ce qui pour une approximation d'un problème NP-difficile est tout à fait raisonnable.  
+L'algorithme S-MIS de Li et al. pour le calcul d'un Ensemble Dominant Connexe fournit une `4.8+ln(5)`-approximation dans un temps qui est en pratique quasi-linéaire. `4.8+ln(5)` \$simeq$ `6.4`, mais en pratique, la solution est plus proche d'une `2` ou `1.5` approximation, ce qui pour une approximation d'un problème NP-difficile est tout à fait raisonnable.  
 La faible complexité permet de résoudre le problème du CDSP sur des graphes contenant plusieurs dizaines voir centaines de milliers de points dans un temps raisonnable, ce qui est très intéressant. Tandis que sur des instances de taille plus petite, on peut facilement introduire un peu d'aléatoire pour obtenir une solution meilleure dans un temps légèrement plus élevé. Et dans les instances de quelques centaines de points, du local searching peut aisémment améliorer la solution au coût de quelques secondes.  
 C'est donc un bon algorithme qui allie rapidité de calcul et résultat performant, et qu'il est donc intéressant d'utiliser en pratique.
 
