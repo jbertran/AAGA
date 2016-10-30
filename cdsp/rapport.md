@@ -170,8 +170,7 @@ points sont générés aléatoirement.
 
 ![Runtime de S-MIS en fonction de la taille du graphe](img/size.png)
 
-Nous constatons ici que, à densité et connexité égales, l'algorithme est linéaire en la taille du nuage de
-points en entrée. 
+Nous constatons ici que, à densité et connexité égales, l'algorithme est linéaire en la taille du nuage de points en entrée. 
 
 ## Connexité du graphe géométrique
 
@@ -187,10 +186,10 @@ indiquant les chemins connexes potentiels que l'algorithme impose de recalculer.
 On remarque que le comportement de l'algorithme n'est pas, comme attendu monotone. On peut expliquer cela par la présence 
 d'un seuil à partir duquel le nombre de voisins moyen devient suffisamment grand pour que le nombre de *black-blue components*
 soit significativement réduit puisqu'un nombre important de noeuds non-visités deviennent alors voisins d'un noeud bleu à chaque
-itération. Comme vu précédemment, la complexité de l'algorithme S-MIS étant $\mathcal{O}(n*m)$, 
+itération. Comme vu précédemment, la complexité de l'algorithme S-MIS étant $\mathcal{O}(n*n)$, 
 
 
-## Comparaisons
+# Comparaisons et optimisations
 
 ### Randomization
 
@@ -215,14 +214,27 @@ Néamoins, appliquer du local searching sur la solution fournie par l'algorithme
 
 Etant donnée un graphe G = (V,E) et un ensemble S $\in$ V, un arbre de Steiner est un sous-graphe de G passant par tous les poins de S, de taille minimale.  
 En parant du MIS calculé à l'aide de l'algorithme présenté au début de ce rapport, le calcul d'un arbre de Steiner permet de connecter tous les points du MIS, ce qui produit un CDSP.  
-Cependant, calculer un 
+Cependant, calculer un arbre de Steiner NP-difficile, et notre implémentation effectue une sorte de local searching, donc sa complexité est en `O(n^3)`.  
+De plus, en partant d'un MIS, l'algorithme S-MIS fournit déjà une bonne solution pour obtenir un CDSP, et le calcul d'un arbre de Steiner permet de trouver une solution qui est uniquement quelques pourcents meilleure (environ 5% en moyenne, comme le montre la figure ?????? ).  
+Par conséquent, on peut affirmer qu'utiliser Steiner de cette manière pour trouver un CDSP est bien moins efficasse que de calcule le S-MIS à l'aide de l'algorithme de Li et al..
 
 
-### Autres algorithmes
+### Bilan sur les comparaisons et optimisations
+
+Les deux optimisations intéressantes que nous avons proposé sont l'introduction d'aléatoire et le local searching.  
+L'introduction de l'aléatoire permet de trouver une solution de coup en moyenne 5% plus faible, pour un coup peu élevé : la complexité en `O` reste la même. Cela est donc une solution viable, quelque soit la taille est instances : l'ordre de grandeur du temps de calcul restera le même, et la solution sera en moyenne meilleure.  
+Le local searching, quant à lui est à utiliser avec plus de parsimonie : sur des graphes contenant peut de points, il permettra de trouver une solution environ 20% plus optimale moyennent un temps de calcul bien plus important mais raisonnable. Mais plus le nombre de points du graphe augmente, moins cette option est envisageable car trop couteuse en temps.
+
 
 ![Comparaison d'algorithmes d'ensemble dominant connexe](img/algos.png)
 
+
 # Conclusion
+
+L'algorithme S-MIS de Li et al. pour le calcul d'un Ensemble Dominant Connexe fournis une `1+ln(5)`-approximation dans un temps qui est en pratique quasi-linéaire. `1+ln(5)` \$simeq$ `2.6`, mais en pratique, la solution est plus proche d'une `2` ou `1.5` approximation, ce qui pour une approximation d'un problème NP-difficile est tout à fait raisonnable.  
+La faible complexité permet de résoudre le problème du CDSP sur des graphes contenant plusieurs dizaines voir centaines de milliers de points dans un temps raisonnable, ce qui est très intéressant. Tandis que sur des instances de taille plus petite, on peut facilement introduire un peu d'aléatoire pour obtenir une solution meilleure dans un temps légèrement plus élevé. Et dans les instances de quelques centaines de points, du local searching peut aisémment améliorer la solution au coût de quelques secondes.  
+C'est donc un bon algorithme qui allie rapidité de calcul et résultat performant, et qu'il est donc intéressant d'utiliser en pratique.
+
 
 # Références
 
