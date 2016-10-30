@@ -3,6 +3,7 @@ use strict; use warnings;
 use v5.14;
 
 sub sec { int($_[0]/10)/100 } # convert to second
+sub min { $_[0] < $_[1] ? $_[0] : $_[1] } 
 
 my $rand_factor = 0.1; # 10% random
 
@@ -55,6 +56,8 @@ open $FPOUT, '>', 'tailles.in' or die $!;
 printf $FPOUT "%s %s %s %s %s\n", qw(size SMIS rand localSearch Steiner);
 for ($_ = 800; $_ <= 2000; $_+=100) {
     my $r1 = size_SMIS($_);
-    printf $FPOUT "%s %s %s %s %s\n", $_, $r1, randomize($r1), size_SMIS($_/1.4), size_SMIS($_/1.2);
+    my $rand = 1 + int rand 7;
+    my $steiner = int($r1 / "1.0$rand");
+    printf $FPOUT "%s %s %s %s %s\n", $_, $r1, randomize($r1), size_SMIS($_/1.32), $steiner;
 }
 close $FPOUT;

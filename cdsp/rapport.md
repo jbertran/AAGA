@@ -17,7 +17,7 @@ Le papier présentant l'algorithme *S-MIS* ne présente pas d'algorithme permett
 
 ## Calcul du MIS
 
-Un ensemble indépendant dans un graphe *G* = (*S*, *A*) est un sous-ensemble *D* de *S* tel que pour tout *u* $\in$ *D* et *v* $\in$ *D*, *uv* $\notin$ *A*. Le problème de calculer un ensemble indépendant maximum est NP-difficile. C'est donc sur une $\alpha$-approximation que nous avons implémenté.  
+Un ensemble indépendant dans un graphe *G* = (*S*, *A*) est un sous-ensemble *D* de *S* tel que pour tout *u* $\in$ *D* et *v* $\in$ *D*, *uv* $\notin$ *A*. Le problème de calculer un ensemble indépendant maximum est NP-difficile. C'est donc une $\alpha$-approximation que nous avons implémenté.  
 Le MIS nécessaire au calcul du MCDS avec l'algorithme S-MIS doit de plus satisfaire une condition supplémentaire : pour tout *u* $\in$ *D*, il doit exister *w* $\in$ *S* tel qu'il existe *v* $\in$ *D*, *v* $\neq$ *u* tel que *uw* $\in$ *A* et *vw* $\in$ *A*. Moins formellement, cela signifie qu'entre deux points apparetenant au MIS, il doit y avoir un et un seul point n'appartenant pas au MIS.
 
 ![Un MIS valide comme base de l'algorithme S-MIS](img/fig1.png)
@@ -29,11 +29,12 @@ Les figures 1 et 2 montrent toutes les deux des MIS : tous les sommets sont soit
 
 
 ### Implémentation de l'algorithme de calcul du MIS
+
 L'algorithme utilisé pour calculer le MIS se base sur un système de couleur pour différencier les points non-visités (blancs) des points appartenant au MIS (noirs) et des points n'appartenant pas au MIS (bleus) : on part d'un point au hasard du graphe, que l'on marque noir (il est le premier point du MIS). On marque tous ses voisins bleus (il ne peuvent pas appartenir au MIS). Puis on ajoute les voisins des voisins qui sont encore blancs à la liste des points potentiellement dans le MIS. On retire le premier point de cette liste et on réitère le processus tant qu'il reste des points à examiner.
 
-De manière plus pratique, le pseudo-code de cet algorithme est le suivant : 
+De manière plus pratique, le pseudo-code de cet algorithme est le suivant :  
 
-    def MIS ( G = (V,E) ) :
+    def MIS ( G = (V, E) ) :
 	  MIS = []
 	  for (p : V) :                     # Initializing the colors.
 	    p.color = White
@@ -204,7 +205,15 @@ Le *local searching* est une technique assez simple à implémenter pour amélio
 Appliqué à notre problème, le *local searching* le plus basique consiste à essayer de remplacer des couples de deux points par un unique point. (On pourrait aussi essayer de remplacer trois points par deux, mais la complexité serait bien plus élevé).  
 Le *local searching* présente cependant un inconvenient majeur : même en choisissant des bonnes structures de données (une table de hashage pour vérifier la validité d'une solution en temps constant par exemple), sa complexité est en `O(n^3)`, soit beaucoup plus que celle de l'algorithme S-MIS.  
 Il convient de remarquer également que le *local searching*, bien que permettant d'améliorer certaines solutions, n'est pas parfait pour autant, car il est notamment assez sensible aux extremum locaux (bien qu'un peu de randomisation permet de se défaire légèrement de cet inconvénient).  
-Néamoins, appliquer du local searching sur la solution fournie par l'algorithme S-MIS permet d'améliorer celle-là de environ 20% (cf figure ????????????? ). Au dela de quelques milliers de points, il faut cependant compter quelques minutes, voir quelques heures pour trouver des solutions.
+A noter qu'en tenant compte du fait que pour qu'un point puisse en remplacer deux autres, il faut que les deux points en question soit relativement proche, on peut donc optimiser le local searching en ne considérant que les paires de points séparés d'une distance de moins de trois fois le *threshold* du graphe géométrique.  
+Néamoins, appliquer du local searching sur la solution fournie par l'algorithme S-MIS permet d'améliorer celle-là de environ 20% (cf figure ????????????? ). Au dela de quelques milliers de points, il faut cependant compter quelques minutes, voir quelques heures pour trouver des solutions.  
+
+
+### MIS puis Steiner
+
+Etant donnée un graphe G = (V,E) et un ensemble S $\in$ V, un arbre de Steiner est un sous-graphe de G passant par tous les poins de S, de taille minimale.  
+En parant du MIS calculé à l'aide de l'algorithme présenté au début de ce rapport, le calcul d'un arbre de Steiner permet de connecter tous les points du MIS, ce qui produit un CDSP.  
+
 
 
 # Références
