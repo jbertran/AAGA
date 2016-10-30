@@ -62,7 +62,7 @@ On note *n*=|*S*|, et *m*=|*E*|.
 
 __Initialisation__ :  
 Initialiser les couleurs des sommets requière un unique parcours des sommets, en temps linéaire en la taille de *S* : `O(n)`.  
-Pour des questions d'optimisation, on précalculera lors de l'initialisation une table d'association point-voisins qui a chaque point associera ses voisins. Cette opération est réalisable en `O(n*m)`), et permet de réaliser l'opération `neihbors` en `O(1)`.
+Pour des questions d'optimisation, on précalculera lors de l'initialisation une table d'association point-voisins qui a chaque point associera ses voisins. Cette opération est réalisable en `O(n^2)`), et permet de réaliser l'opération `neihbors` en `O(1)`.
 
 __Boucle principale__ :  
 Le pseudo-code précédemment donné est une version simplifié de l'algorithme réel pour des raisons de lisibilité, en particulier, dans une vrai implémentation un point n'est ajouté à la stack que si il n'y est pas déjà et si il est blanc. En tenant compte de cette condition, et en constatant qu'il y a autant d'itération de la boucle principale qu'il y a d'éléments qui sont ajoutés dans la stack lors de l'execution de l'algorithme, et vu qu'un sommet blanc enlevé de la Stack est marqué noir, on en conclue que le nombre d'itéreation de cette boucle est borné par *n*.  
@@ -128,7 +128,7 @@ Il faut également tenir compte du nombre d'opérations nécessaire pour déterm
 
 La boucle principale de l'algorithme est effectuée cinq fois. Dedans, on va tester tous les points gris ($\mathcal{O}(n)$), et si ils ont plus de *i* voisins noirs de différentes *black-blue components* (calcul en $\mathcal{O}(m)$, comme on vient de le montrer), alors on change leur couleur. La compolexité de cette boucle est donc $\mathcal{O}(m*n)$.  
 
-On a donc un $\mathcal{O}(n)$ pour l'initialisation des structures, puis $\mathcal{O}(n*m)$ pour la boucle principale. La complexité temporelle de l'algorithme est donc $\mathcal{O}(n*m)$.
+On a donc un $\mathcal{O}(n^2)$ pour l'initialisation des structures, puis $\mathcal{O}(n*m)$ pour la boucle principale. Or *m* $\leq$ *n*, donc la complexité temporelle de l'algorithme est donc $\mathcal{O}(n^2)$.
 
 
 # Performances
@@ -189,13 +189,22 @@ voisins moyen élevé
 
 ## Comparaisons
 
+### Randomization
+
+Bien que n'étant pas présenté comme un algorithme probabiliste, l'algorithme de calcul du MIS ne précise pas comment choisir le premier point du MIS ni dans quel ordre considérer les points suivants. La version que nous avons implémenté se base sur une pile FIFO, et le premier point que l'on y ajoute est le premier point de la liste des points. De même, l'algorithme S-MIS ne dit pas dans quel ordre les points doivent être considérés.  
+Une optimisation peu couteuse et facile à implémenter consiste donc à introduire de l'aléatoire dans l'odre dans lequel les points sont considérés, ce qui produira probablement un résultat différent. Cela rajoute juste une constante dans la complexité de l'algorithme. A noter que les précalcul n'ont besoin d'être fait qu'une seule fois, notamment le `O(n^2)` de l'initialisation des voisins est effectué une seule fois.  
+Le graphe étant stocké sous forme d'une liste chainée de points, une manière simple d'introduire cet aléatoire consiste à mélanger aléatoire la liste des points avant de commencer l'algorithme (effectué par la méthode `Collection.shuffle` de Java).  
+En calculant dix fois le CDSP sur le même set de points mais rangés dans un ordre différent plusieurs fois, et en gardant uniquement le résultat, celà permet de trouver un CDSP généralement entre 5 et 10% plus petit (cf figure ???????????????????????????? ).  
+
+
+
 ### S-MIS et local searching
 
 Le *local searching* est une technique assez simple à implémenter pour améliorer d'algorithme d'approximations pour des problèmes d'optimisation. Le nom *local searching* vient du fait que le principe est d'explorer l'espace des solutions aux environ de la solution obtenue avec de la modifier jusqu'à converger sur un extremum local.  
 Appliqué à notre problème, le *local searching* le plus basique consiste à essayer de remplacer des couples de deux points par un unique point. (On pourrait aussi essayer de remplacer trois points par deux, mais la complexité serait bien plus élevé).  
-Le *local searching* présente cependant un inconvenient majeurs : en choisissant des bonnes structures de données (une table de hashage pour vérifier la validité d'une solution en temps constant par exemple), sa complexité est en `O(n^3)`, soit beaucoup plus que celle de l'algorithme S-MIS.  
+Le *local searching* présente cependant un inconvenient majeur : même en choisissant des bonnes structures de données (une table de hashage pour vérifier la validité d'une solution en temps constant par exemple), sa complexité est en `O(n^3)`, soit beaucoup plus que celle de l'algorithme S-MIS.  
 Il convient de remarquer également que le *local searching*, bien que permettant d'améliorer certaines solutions, n'est pas parfait pour autant, car il est notamment assez sensible aux extremum locaux (bien qu'un peu de randomisation permet de se défaire légèrement de cet inconvénient).  
-
+Néamoins, appliquer du local searching sur la solution fournie par l'algorithme S-MIS permet d'améliorer celle-là de environ 20% (cf figure ????????????? ). Au dela de quelques milliers de points, il faut cependant compter quelques minutes, voir quelques heures pour trouver des solutions.
 
 
 # Références

@@ -29,8 +29,8 @@ sub n_cube {
 
 my $SMIS    = affine(1,1,2);
 my $rand    = affine(10,1,2);
-my $local   = n_cube(3,1.4);
-my $steiner = n_cube(3,1.6);
+my $local   = n_cube(3,1.05);
+my $steiner = n_cube(3,1.7);
 
 open my $FPOUT, '>', 'temps_calcul.in' or die $!;
 printf $FPOUT "%s %s %s %s %s\n", qw(size SMIS rand localSearch Steiner);
