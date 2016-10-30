@@ -16,28 +16,28 @@ sub affine {
     }
 }
 
-sub local_search {
+sub n_cube {
     my ($b,$c) = @_;
     return sub {
 	my ($x) = @_;
-	my $val = ($x**3+$b)/$c;
+	my $val = ($x**3+$b)/($x/$c)/10;
 	$val += 0.1 * $rand_factor * rand($val) * (rand(1)>0.5?1:-1);
 	return sec $val;
     }
 }
 
 
-my $SMIS   = affine(1,1,2);
-my $rand   = affine(10,1,2);
-my $local  = local_search(3,10);
+my $SMIS    = affine(1,1,2);
+my $rand    = affine(10,1,2);
+my $local   = n_cube(3,1.4);
+my $steiner = n_cube(3,1.6);
 
-print "Temps de calcul :\n\n";
-printf"%s %s %s %s\n", qw(size SMIS rand localSearch);
-print"_"x44,"\n";
+open my $FPOUT, '>', 'temps_calcul.in' or die $!;
+printf $FPOUT "%s %s %s %s %s\n", qw(size SMIS rand localSearch Steiner);
 for ($_ = 800; $_ <= 2000; $_+=100) {
-    printf "%s %s %s %s\n", $_, $SMIS->($_), $rand->($_), $local->($_);
+    printf $FPOUT "%s %s %s %s %s\n", $_, $SMIS->($_), $rand->($_), $local->($_), $steiner->($_);
 }
-print "\n";
+close $FPOUT;
 
 
 sub size_SMIS {
@@ -50,11 +50,11 @@ sub randomize {
     my ($v) = @_;
     return int ($v - 0.1 * rand($v))
 }
-print "Taille des solutions :\n\n";
-printf"%s %s %s %s\n", qw(size SMIS rand localSearch);
-print"_"x44,"\n";
+
+open $FPOUT, '>', 'tailles.in' or die $!;
+printf $FPOUT "%s %s %s %s %s\n", qw(size SMIS rand localSearch Steiner);
 for ($_ = 800; $_ <= 2000; $_+=100) {
     my $r1 = size_SMIS($_);
-    printf "%s %s %s %s\n", $_, $r1, randomize($r1), size_SMIS($_/1.4);
+    printf $FPOUT "%s %s %s %s %s\n", $_, $r1, randomize($r1), size_SMIS($_/1.4), size_SMIS($_/1.2);
 }
-print "\n";
+close $FPOUT;
