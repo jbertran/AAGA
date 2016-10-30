@@ -6,7 +6,7 @@
 # Introduction
 Un ensemble dominant d'un graphe *G* = (*S*, *A*) est un sous-ensemble *D* de *S* tel que pour toute arrête *uv* $\in$ *A*, *u* $\in$ *D* ou *v* $\in$ *D*. Le problème consistant à trouver un ensemble dominant connexe de taille minimal (MCDS) est NP-Difficile. Dans ce rapport, nous étudierons l'algortihme *S-MIS* présenté dans *On greedy construction of connected dominating sets in wireless networks* de Li, Thai, Wang, Yi, Wan, Du, Tong, Bin, Zao, Wun, Zhou, 2005, qui propose un Schéma d'Approximation en Temps Polynomial (PTAS) donnant une *(4.8+ln(5))*-approximation de la solution optimale. Nous commenceront par présenter l'algorithme, puis présenteront les résultats expérimentaux obtenus, que nous compareront avec d'autres algorithmes de résolution de ce problème.
 
-Plus précisémment, nous étudieront cette algorithme dans le contexte des graphes géométriques. Ceux-ci sont composés d'un ensemble de sommets *S* et d'arrêtes *A* telles que *uv* $\in$ *A* si et seulement si *distance(u,v)* $\leq$ *k*, *k* étant un seuil fixe. Nous présenteront également les générateurs aléatoires utilisés pour générer les graphes de tests.  
+Plus précisémment, nous étudieront cet algorithme dans le contexte des graphes géométriques. Ceux-ci sont composés d'un ensemble de sommets *S* et d'arêtes *A* telles que *uv* $\in$ *A* si et seulement si *distance(u,v)* $\leq$ *k*, *k* étant un seuil fixe. Nous présenteront également la méthode utilisée pour générer les graphes de test que nous utilisons.
 
 
 # Présentation de l'algorithme
@@ -23,7 +23,6 @@ Le MIS nécessaire au calcul du MCDS avec l'algorithme S-MIS doit de plus satisf
 ![Un MIS valide comme base de l'algorithme S-MIS](img/fig1.png)
 
 ![Un MIS invalide comme base de l'algorithme S-MIS](img/fig2.png)
-
 
 Les figures 1 et 2 montrent toutes les deux des MIS : tous les sommets sont soit dans le MIS soit ont un voisin dans le MIS, et aucun sommet du MIS n'a de voisin dans le MIS. Cependant, dans le second, les deux sommets du MIS sont séparés d'une distance de deux sommets tandis qu'il ne sont séparés que d'un sommet dans le premier. Par conséquent, seule la figure 1 représente un MIS valide comme base de l'algorithme S-MIS.
 
@@ -66,21 +65,19 @@ Initialiser les couleurs des sommets requière un unique parcours des sommets, e
 Pour des questions d'optimisation, on précalculera lors de l'initialisation une table d'association point-voisins qui a chaque point associera ses voisins. Cette opération est réalisable en $\mathcal{O}(n^2)$), et permet de réaliser l'opération `neighbors` en $\mathcal{O}(1)$.
 
 __Boucle principale__ :  
-Le pseudo-code précédemment donné est une version simplifié de l'algorithme réel pour des raisons de lisibilité, en particulier, dans une vrai implémentation un point n'est ajouté à la stack que si il n'y est pas déjà et si il est blanc. En tenant compte de cette condition, et en constatant qu'il y a autant d'itération de la boucle principale qu'il y a d'éléments qui sont ajoutés dans la stack lors de l'execution de l'algorithme, et vu qu'un sommet blanc enlevé de la Stack est marqué noir, on en conclue que le nombre d'itéreation de cette boucle est borné par *n*.  
+Le pseudo-code précédemment donné est une version simplifiée de l'algorithme réel pour des raisons de lisibilité, en particulier, dans une vrai implémentation un point n'est ajouté à la pile que si il n'y est pas déjà et si il est blanc. En tenant compte de cette condition, et en constatant qu'il y a autant d'itérations de la boucle principale qu'il y a d'éléments qui sont ajoutés dans la pile lors de l'execution de l'algorithme, et vu qu'un sommet blanc enlevé de la Stack est marqué noir, on en conclue que le nombre d'itéreations de cette boucle est borné par *n*.  
 On a expliqué précédemment que l'opération `neighbors` est réalisable en temps constant. Le nombre de voisins d'un points cependant est uniquement bornée par *m*. Par conséquent la boucle parcourant les voisins des voisins a une complexité en $\mathcal{O}(m*m)$.  
 La complexité de la boucle principale est donc $\mathcal{O}(n*m*m)$.  
 
 Il convient cependant de noter que dans les instances traitées, cette limite est une sur-approximation très large. En effet, les graphes étant géométriques, la distribution des sommets aléatoire et uniforme, et le seuil *k* très inférieur à la distance entre les extrèmes du domaine de définition des sommets, le nombre d'arrête par sommets sera très inférieur à *m*.  
-Par conséquent, une complexité plus réaliste serait de l'ordre de $\mathcal{O}(n*m)$. (Celà revient à supposer que le nombre d'arrêtes par sommets est de l'ordre de $\sqrt{m}$; ce chiffre dépend en réalité de la quantité de sommets, de l'air de la surface dans laquelle ils sont, et de l'uniformité de leur répartition. Dans nos test, le nombre d'arrêtes par sommets est en effet bien plus proche de $\sqrt{m}$ que de *m*).
-
-
+Par conséquent, une complexité plus réaliste serait de l'ordre de $\mathcal{O}(n*m)$. (Celà revient à supposer que le nombre d'arêtes par sommets est de l'ordre de $\sqrt{m}$; ce chiffre dépend en réalité de la quantité de sommets, de l'air de la surface dans laquelle ils sont, et de l'uniformité de leur répartition. Dans nos test, le nombre d'arêtes par sommets est en effet bien plus proche de $\sqrt{m}$ que de *m*).
 
 
 ## Calcul du S-MIS : algorithme de Li et al.
 
 ### Principe de l'algorithme
 L'algorithme se base sur un Lemme inhérent à la manière dont le MIS est construit : il faut au maximum ajouter un point pour connecter deux points. (cf les figures 1 et 2).  
-Informellement, à partir de ce Lemme, le principe de l'algorithme est de regrouper des clusters de sommets de manières greedy : on ajoute un à un les points qui permettent de regrouper le maximum de clusters.  
+Informellement, à partir de ce Lemme, le principe de l'algorithme est de regrouper des clusters de sommets de manières gloutonne : on ajoute un à un les points qui permettent de regrouper le maximum de clusters.  
 L'algorithme utilise un système de couleurs pour déterminer les points apartenant au MCDS car ils appartiennent au MIS (black) ou car on les y a rajoutés (blue), et ceux dont le status est encore à déterminer (grey). Les "clusters" de sommets à reliés sont appelés *black-blue component* (car ils sont induits par des points bleus et noirs conjoints, en ignorant les connexions entre sommets bleus). Afin de les relier, on trouve les sommets gris qui sont voisins du plus de points noirs de différents clusters possible (cette affirmation est légèrement inexacte car *du plus* est en réalité *5 ou plus*, puis *4*, puis *3*, *2* et finallement *1*, car en effet, tester toutes les possibilités reviendrait à rajouter un facteur *m* dans l'algorithme alors qu'en tester *5* ne fait qu'ajouter une constante). C'est cette partie de l'algorithme qui est greedy : on ajoute les points qui sur le moment semble aider au maximum a rendre le MIS connexe.
 
 Le pseudo-code est le suivant :
@@ -170,7 +167,12 @@ points sont générés aléatoirement.
 
 ![Runtime de S-MIS en fonction de la taille du graphe](img/size.png)
 
-Nous constatons ici que, à densité et connexité égales, l'algorithme est linéaire en la taille du nuage de points en entrée. 
+Nous constatons ici que, à densité et connexité égales, l'algorithme est linéaire en la taille du nuage de points en entrée,
+ce qui est surprenant au vu de l'analyse de complexité ci-dessus qui nous indique que l'algorithme est en $\mathcal{O}(n^2)$.
+Nous pensons que c'est parce que le calcul des voisins pour tout le graphe réalise en réalité un nombre d'opérations qui est
+petit devant les opérations effectuées lors de la boucle de traitement du graphe dans S-MIS. Une autre possibilité est que
+le changement de la taille de la zone de génération aléatoire des points n'est pas adéquat pour donner un environnement égal
+à tailles de graphes différentes.
 
 ## Connexité du graphe géométrique
 
@@ -186,7 +188,8 @@ indiquant les chemins connexes potentiels que l'algorithme impose de recalculer.
 On remarque que le comportement de l'algorithme n'est pas, comme attendu monotone. On peut expliquer cela par la présence 
 d'un seuil à partir duquel le nombre de voisins moyen devient suffisamment grand pour que le nombre de *black-blue components*
 soit significativement réduit puisqu'un nombre important de noeuds non-visités deviennent alors voisins d'un noeud bleu à chaque
-itération. Comme vu précédemment, la complexité de l'algorithme S-MIS étant $\mathcal{O}(n*n)$, 
+itération. On constate donc en réalité sur le graphe l'interaction entre le nombre d'arêtes du graphe et le nombre de points sur 
+la performance de l'algorithme.
 
 
 # Comparaisons et optimisations
@@ -215,7 +218,7 @@ Néamoins, appliquer du local searching sur la solution fournie par l'algorithme
 Etant donnée un graphe G = (V,E) et un ensemble S $\in$ V, un arbre de Steiner est un sous-graphe de G passant par tous les poins de S, de taille minimale.  
 En parant du MIS calculé à l'aide de l'algorithme présenté au début de ce rapport, le calcul d'un arbre de Steiner permet de connecter tous les points du MIS, ce qui produit un CDSP.  
 Cependant, calculer un arbre de Steiner NP-difficile, et notre implémentation effectue une sorte de local searching, donc sa complexité est en $\mathcal{O}(n^3)$.  
-De plus, en partant d'un MIS, l'algorithme S-MIS fournit déjà une bonne solution pour obtenir un CDSP, et le calcul d'un arbre de Steiner permet de trouver une solution qui est uniquement quelques pourcents meilleure (environ 5% en moyenne, comme le montre la figure ?????? ).  
+De plus, en partant d'un MIS, l'algorithme S-MIS fournit déjà une bonne solution pour obtenir un CDSP, et le calcul d'un arbre de Steiner permet de trouver une solution qui est uniquement quelques pourcents meilleure (environ 5% en moyenne, comme le montre la figure 6).  
 Par conséquent, on peut affirmer qu'utiliser Steiner de cette manière pour trouver un CDSP est bien moins efficasse que de calculer le S-MIS à l'aide de l'algorithme de Li et al..
 
 
@@ -236,7 +239,7 @@ Quant à la qualité des solutions, comme expliqué précedemment, on constate q
 
 # Conclusion
 
-L'algorithme S-MIS de Li et al. pour le calcul d'un Ensemble Dominant Connexe fournit une `4.8+ln(5)`-approximation dans un temps qui est en pratique quasi-linéaire. `4.8+ln(5)` \$simeq$ `6.4`, mais en pratique, la solution est plus proche d'une `2` ou `1.5` approximation, ce qui pour une approximation d'un problème NP-difficile est tout à fait raisonnable.  
+L'algorithme S-MIS de Li et al. pour le calcul d'un Ensemble Dominant Connexe fournit une $4.8+ln(5)$-approximation dans un temps qui est en pratique quasi-linéaire. $4.8+ln(5)$ $\simeq$ $6.4$, mais en pratique, la solution est plus proche d'une $2$ ou $1.5$ approximation, ce qui pour une approximation d'un problème NP-difficile est tout à fait raisonnable.  
 La faible complexité permet de résoudre le problème du CDSP sur des graphes contenant plusieurs dizaines voir centaines de milliers de points dans un temps raisonnable, ce qui est très intéressant. Tandis que sur des instances de taille plus petite, on peut facilement introduire un peu d'aléatoire pour obtenir une solution meilleure dans un temps légèrement plus élevé. Et dans les instances de quelques centaines de points, du local searching peut aisémment améliorer la solution au coût de quelques secondes.  
 C'est donc un bon algorithme qui allie rapidité de calcul et résultat performant, et qu'il est donc intéressant d'utiliser en pratique.
 
