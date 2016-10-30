@@ -213,7 +213,7 @@ Néamoins, appliquer du local searching sur la solution fournie par l'algorithme
 
 Etant donnée un graphe G = (V,E) et un ensemble S $\in$ V, un arbre de Steiner est un sous-graphe de G passant par tous les poins de S, de taille minimale.  
 En parant du MIS calculé à l'aide de l'algorithme présenté au début de ce rapport, le calcul d'un arbre de Steiner permet de connecter tous les points du MIS, ce qui produit un CDSP.  
-
+Cependant, calculer un 
 
 
 # Références
