@@ -187,6 +187,17 @@ On remarque que le comportement de l'algorithme n'est pas, comme attendu monoton
 voisins moyen élevé 
 
 
+## Comparaisons
+
+### S-MIS et local searching
+
+Le *local searching* est une technique assez simple à implémenter pour améliorer d'algorithme d'approximations pour des problèmes d'optimisation. Le nom *local searching* vient du fait que le principe est d'explorer l'espace des solutions aux environ de la solution obtenue avec de la modifier jusqu'à converger sur un extremum local.  
+Appliqué à notre problème, le *local searching* le plus basique consiste à essayer de remplacer des couples de deux points par un unique point. (On pourrait aussi essayer de remplacer trois points par deux, mais la complexité serait bien plus élevé).  
+Le *local searching* présente cependant un inconvenient majeurs : en choisissant des bonnes structures de données (une table de hashage pour vérifier la validité d'une solution en temps constant par exemple), sa complexité est en `O(n^3)`, soit beaucoup plus que celle de l'algorithme S-MIS.  
+Il convient de remarquer également que le *local searching*, bien que permettant d'améliorer certaines solutions, n'est pas parfait pour autant, car il est notamment assez sensible aux extremum locaux (bien qu'un peu de randomisation permet de se défaire légèrement de cet inconvénient).  
+
+
+
 # Références
 
 1. Yingshu Li, My T. Thai, Feng Wang, Chih-Wei Yi, Peng-Jun Wan and Ding-Zhu Du, On greedy construction of connected dominating sets in wireless networks, 2005.
