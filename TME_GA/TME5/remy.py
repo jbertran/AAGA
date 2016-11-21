@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import math
+import time
 import random as rnd
 import argparse as ap
 
@@ -61,6 +62,7 @@ def remy(n):
                  'children': [None, None]}
     nodelist = [tree_root]
     sum_nodes = 3
+    sum_bits = 0
 
     while len(nodelist) < n:
 
@@ -74,6 +76,7 @@ def remy(n):
                         'father': None,
                         'children': [None, None]}
             strat = rnd.randrange(3)
+            sum_bits += math.ceil(math.log(n, 2))
             if strat == 2:                             # New node one level above
                 if node['father'] is None:
                     tree_root = new_node
@@ -81,6 +84,7 @@ def remy(n):
                     idx = node_father_idx(node)
                     node['father']['children'][idx] = new_node
                 side = rnd.randrange(2)
+                sum_bits += math.ceil(math.log(n, 2))
                 new_node['prob'] = 2
                 new_node['children'][side] = node
                 new_node['father'] = node['father']
@@ -97,6 +101,7 @@ def remy(n):
                         'father': None,
                         'children': [None, None]}
             strat = rnd.randrange(2)
+            sum_bits += math.ceil(math.log(n, 2))
             if strat == 0:                             # Add the second child
                 side = 1 if node['children'][0] is not None else 0
                 new_node['father'] = node
@@ -109,6 +114,7 @@ def remy(n):
                     idx = node_father_idx(node)
                     node['father']['children'][idx] = new_node
                 side = rnd.randrange(2)
+                sum_bits += math.ceil(math.log(n, 2))
                 new_node['children'][side] = node
                 new_node['father'] = node['father']
                 node['father'] = new_node
@@ -126,6 +132,7 @@ def remy(n):
                 idx = node_father_idx(node)
                 node['father']['children'][idx] = new_node
             side = rnd.randrange(2)
+            sum_bits += math.ceil(math.log(n, 2))
             new_node['children'][side] = node
             new_node['father'] = node['father']
             node['father'] = new_node
@@ -133,7 +140,7 @@ def remy(n):
         nodelist.append(new_node)
         sum_nodes += 2
 
-    return tree_root
+    return tree_root, sum_bits
 
 def name_gen():
     """Name generator, mostly to tag nodes with a unique identifier
@@ -175,15 +182,44 @@ if __name__ == '__main__':
     parser = ap.ArgumentParser()
     parser.add_argument('-g', type=int, help='Generate a tree with specified size')
     parser.add_argument('-o', type=str, help='Output the generated .dot to specified file')
-    parser.add_argument('--bench', action='store_true', help='Benchmark the algorithm')
+    parser.add_argument('--benchbits', action='store_true', help="Benchmark the algorithm's random bit usage")
+    parser.add_argument('--benchtime', action='store_true', help="Benchmark the algorithm's time complexity")
 
     args = parser.parse_args()
 
     fname = 'tree.dot'
     size = 500
+    samplesize = [i for i in range(100, 3000, 100)]
+
     if args.g is not None:
         size = args.g
     if args.o is not None:
         fname = args.o
-    tree = remy(size)
-    gen_dot(tree, fname)
+
+    if args.benchbits:
+        with open('bits_samples.dat', 'w') as f:
+            for size in samplesize:
+                print('Generating ' + str(size))
+                av = []
+                for it in range(50):
+                    _, bits = remy(size)
+                    av.append(bits)
+                av_bits = sum(av)/len(av)
+                f.write(str(size) + ' ' + str(av_bits) + '\n')
+
+    elif args.benchtime:
+        with open('time_samples.dat', 'w') as f:
+            for size in samplesize:
+                print('Generating ' + str(size))
+                av = []
+                for it in range(50):
+                    tprev = time.time()
+                    remy(size)
+                    t = time.time() - tprev
+                    av.append(t)
+                av_time = sum(av)/len(av)
+                f.write(str(size) + ' ' + str(av_time) + '\n')
+
+    else:
+        tree, _ = remy(size)
+        gen_dot(tree, fname)
