@@ -1,5 +1,8 @@
+#!/usr/bin/python3
+
 import math
 import random as rnd
+import argparse as ap
 
 ## example node
 node = {
@@ -133,24 +136,12 @@ def remy(n):
     return tree_root
 
 def name_gen():
-    """Name generator, mostly to name nodes for display with graphviz (dotty tree.dot)
+    """Name generator, mostly to tag nodes with a unique identifier
     """
     count = 1
     while True:
         yield str(count)
         count += 1
-
-def name_nodes(tree, name_gen):
-    """Transform a tree with basic information into a tree with added unique names on each node
-    """
-    if tree is not None:
-        left = name_nodes(tree['children'][0], name_gen)
-        right = name_nodes(tree['children'][1], name_gen)
-        tree['name'] = next(name_gen)
-        tree['children'] = [left, right]
-        return tree
-    else:
-        return None
 
 def traverse_side_effect(side_effect, tree):
     """Infix tree traversal for functions with side-effects.
@@ -160,26 +151,39 @@ def traverse_side_effect(side_effect, tree):
         side_effect(tree)
         traverse_side_effect(side_effect, tree['children'][1])
 
-def gen_dot(tree):
+def gen_dot(tree, fname):
     """Generate the .dot file corresponding to the generated tree using the
     previously defined name generator.
     """
-    ng = name_gen()
-    named_tree = name_nodes(tree, ng)
 
-    with open('tree.dot', 'w') as f:
+    with open(fname, 'w') as f:
         def output_dot_node(node, out=f):
             if node['children'][0] is not None:
-                f.write(node['name'] + ' -> ' + node['children'][0]['name'] + ';\n')
+                f.write(node['tag'] + ' -> ' + node['children'][0]['tag'] + ';\n')
             if node['children'][1] is not None:
-                f.write(node['name'] + ' -> ' + node['children'][1]['name'] + ';\n')
+                f.write(node['tag'] + ' -> ' + node['children'][1]['tag'] + ';\n')
         f.write('digraph tree {\n')
-        traverse_side_effect(output_dot_node, named_tree)
+        traverse_side_effect(output_dot_node, tree)
         f.write('}\n')
 
-if __name__ == '__main__':
+def tests():
+    pass
 
+if __name__ == '__main__':
     rnd.seed()
 
-    remy500 = remy(500)
-    gen_dot(remy500)
+    parser = ap.ArgumentParser()
+    parser.add_argument('-g', type=int, help='Generate a tree with specified size')
+    parser.add_argument('-o', type=str, help='Output the generated .dot to specified file')
+    parser.add_argument('--bench', action='store_true', help='Benchmark the algorithm')
+
+    args = parser.parse_args()
+
+    fname = 'tree.dot'
+    size = 500
+    if args.g is not None:
+        size = args.g
+    if args.o is not None:
+        fname = args.o
+    tree = remy(size)
+    gen_dot(tree, fname)
