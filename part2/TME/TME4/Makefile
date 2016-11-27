@@ -13,7 +13,7 @@ bitsplot: bits.plt bits_samples.dat
 data: bitsdata timedata
 
 timedata:
-	./remy.py --benchtime
+	./randomTrees.py --benchtime
 
 bitsdata:
-	./remy.py --benchbits
+	./randomTrees.py --benchbits

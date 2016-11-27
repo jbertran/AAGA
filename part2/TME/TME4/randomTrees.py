@@ -27,11 +27,8 @@ def alea(sum_nodes, nodelist):
 def node_arity(node):
     """Return how many non-null children the node has
     """
-    ret = 0
-    for i in node['children']:
-        if i is not None:
-            ret += 1
-    return ret
+    l, r = node['children']
+    return 2 if l and r else 1 if l or r else 0
 
 def node_father_idx(node):
     """Return a node's position in its father's list
@@ -67,6 +64,7 @@ def remy(n):
     while len(nodelist) < n:
 
         node = alea(sum_nodes, nodelist)
+        sum_bits += math.ceil(math.log(len(nodelist), 2))
         new_node = None
 
         # LEAF
@@ -76,7 +74,7 @@ def remy(n):
                         'father': None,
                         'children': [None, None]}
             strat = rnd.randrange(3)
-            sum_bits += math.ceil(math.log(n, 2))
+            sum_bits += 2
             if strat == 2:                             # New node one level above
                 if node['father'] is None:
                     tree_root = new_node
@@ -84,7 +82,7 @@ def remy(n):
                     idx = node_father_idx(node)
                     node['father']['children'][idx] = new_node
                 side = rnd.randrange(2)
-                sum_bits += math.ceil(math.log(n, 2))
+                sum_bits += 1
                 new_node['prob'] = 2
                 new_node['children'][side] = node
                 new_node['father'] = node['father']
@@ -101,7 +99,7 @@ def remy(n):
                         'father': None,
                         'children': [None, None]}
             strat = rnd.randrange(2)
-            sum_bits += math.ceil(math.log(n, 2))
+            sum_bits += 1
             if strat == 0:                             # Add the second child
                 side = 1 if node['children'][0] is not None else 0
                 new_node['father'] = node
@@ -114,7 +112,7 @@ def remy(n):
                     idx = node_father_idx(node)
                     node['father']['children'][idx] = new_node
                 side = rnd.randrange(2)
-                sum_bits += math.ceil(math.log(n, 2))
+                sum_bits += 1
                 new_node['children'][side] = node
                 new_node['father'] = node['father']
                 node['father'] = new_node
@@ -132,7 +130,7 @@ def remy(n):
                 idx = node_father_idx(node)
                 node['father']['children'][idx] = new_node
             side = rnd.randrange(2)
-            sum_bits += math.ceil(math.log(n, 2))
+            sum_bits += 1
             new_node['children'][side] = node
             new_node['father'] = node['father']
             node['father'] = new_node
