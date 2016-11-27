@@ -5,8 +5,9 @@ import time
 import random as rnd
 import argparse as ap
 
-## example node
+# example node
 node = {
+    'tag': 1,
     'prob': 1,
     'father': None,
     'children': [None, None]

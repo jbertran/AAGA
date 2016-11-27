@@ -8,4 +8,9 @@ set title 'Complexité en bits aléatoires générés'
 set xlabel 'Taille des arbres générés'
 set ylabel 'Moyenne du nombre de bits aléatoires générés'
 
-plot 'bits_samples.dat' using 1:2 title '' with linespoints
+# Best fit line
+f(x) = a*x+b
+fit f(x) 'bits_samples.dat' using 1:2 via a,b
+title_f(a,b) = sprintf('Régression linéaire: f(x) = %.2fx + %.2f', a, b)
+
+plot 'bits_samples.dat' using 1:2 title '' with linespoints, f(x) title title_f(a, b)
