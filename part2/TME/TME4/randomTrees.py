@@ -188,7 +188,7 @@ if __name__ == '__main__':
 
     fname = 'tree.dot'
     size = 500
-    samplesize = [i for i in range(100, 3000, 100)]
+    samplesize = [i for i in range(100, 2000, 100)]
 
     if args.g is not None:
         size = args.g
@@ -199,25 +199,19 @@ if __name__ == '__main__':
         with open('bits_samples.dat', 'w') as f:
             for size in samplesize:
                 print('Generating ' + str(size))
-                av = []
-                for it in range(50):
+                for it in range(10):
                     _, bits = remy(size)
-                    av.append(bits)
-                av_bits = sum(av)/len(av)
-                f.write(str(size) + ' ' + str(av_bits) + '\n')
+                    f.write(str(size) + ' ' + str(bits) + '\n')
 
     elif args.benchtime:
         with open('time_samples.dat', 'w') as f:
             for size in samplesize:
                 print('Generating ' + str(size))
-                av = []
-                for it in range(50):
+                for it in range(10):
                     tprev = time.time()
                     remy(size)
                     t = time.time() - tprev
-                    av.append(t)
-                av_time = sum(av)/len(av)
-                f.write(str(size) + ' ' + str(av_time) + '\n')
+                    f.write(str(size) + ' ' + str(t) + '\n')
 
     else:
         tree, _ = remy(size)

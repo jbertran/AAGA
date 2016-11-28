@@ -1,5 +1,5 @@
 # Output
-set terminal png enhanced font "arial,10" fontscale 1.0
+set terminal png enhanced font "arial,10" fontscale 1.0 size 1920,1080
 set output 'times.png'
 
 set key left top
@@ -13,4 +13,4 @@ f(x) = a*x**2+b*x+c
 fit f(x) 'time_samples.dat' using 1:2 via a,b,c
 title_f(a,b,c) = sprintf('Régression linéaire: f(x) = %.2fx**2 + %.2fx + %.2f', a, b, c)
 
-plot 'time_samples.dat' using 1:2 title '' with linespoints, f(x) title title_f(a,b,c)
+plot 'time_samples.dat' using 1:2 title '' with points, f(x) title title_f(a,b,c)
