@@ -1,5 +1,6 @@
 import operator as op
 from functools import reduce
+
 def ncr(n, r):
     r = min(r, n-r)
     if r == 0: return 1
@@ -16,9 +17,14 @@ def cat(n):
     return (1/(n+1)) * ncr(2*n, n)
 
 def catlist(n):
+    """List of catalan numbers from 0 to n-1
+    """
     return [cat(i) for i in range(n)]
 
 def decomp(n):
+    """Generate a list of the number of trees in catalan(n) according to their
+    configuration
+    """
     cl = catlist(n)
     bn = []
     i = 0
@@ -28,7 +34,8 @@ def decomp(n):
     return bn
 
 def gen(n):
-
+    """Recursively generate a binary tree of size n
+    """
     if n == 0:
         return {}
 
@@ -44,12 +51,17 @@ def gen(n):
             'right': gen(n-1-i)}
 
 def tag_gen():
+    """Simple number generator for tagging trees
+    """
     i = 0
     while True:
         yield str(i)
         i += 1
 
 def tag_tree_rec(tree, gen):
+    """Recursively tag the tree with arbitrary identifiers
+    to prepare for graphviz display
+    """
     if tree:
         tree['tag'] = next(gen)
     else:
@@ -58,6 +70,11 @@ def tag_tree_rec(tree, gen):
     tree['left'] = tag_tree_rec(tree['left'], gen)
     tree['right'] = tag_tree_rec(tree['right'], gen)
     return tree
+
+def tag_tree(tree):
+    """Call the recursvive tagging on root with a generator 
+    """
+    return tag_tree_rec(tree, tag_gen())
 
 def traverse_side_effect(side_effect, tree):
     """Infix tree traversal for functions with side-effects.
@@ -72,14 +89,13 @@ def gen_dot(tree, fname):
     """Generate the .dot file corresponding to the generated tree using the
     previously defined name generator.
     """
-    gen = tag_gen()
-    tree = tag_tree_rec(tree, gen)
+    tree = tag_tree(tree)
     with open(fname, 'w') as f:
         def output_dot_node(node, out=f):
             if node.get('left'):
-                f.write(node['tag'] + ' -> ' + node['left']['tag'] + ';\n')
+                out.write(node['tag'] + ' -> ' + node['left']['tag'] + ';\n')
             if node.get('right'):
-                f.write(node['tag'] + ' -> ' + node['right']['tag'] + ';\n')
+                out.write(node['tag'] + ' -> ' + node['right']['tag'] + ';\n')
         f.write('digraph tree {\n')
         traverse_side_effect(output_dot_node, tree)
         f.write('}\n')
