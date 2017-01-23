@@ -72,7 +72,7 @@ def tag_tree_rec(tree, gen):
     return tree
 
 def tag_tree(tree):
-    """Call the recursvive tagging on root with a generator 
+    """Call the recursvive tagging on root with a generator
     """
     return tag_tree_rec(tree, tag_gen())
 
