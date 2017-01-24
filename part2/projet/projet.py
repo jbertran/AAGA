@@ -1,6 +1,18 @@
 import math
 import random
+import functools
 
+def id_generator():
+    """Simple ID generator to differentiate node dictionaries,
+    since they need to be unique in order for list.remove() to
+    behave correctly
+    """
+    id = 0
+    while True:
+        yield id
+        id += 1
+
+@functools.lru_cache()
 def g (n) :
     n -= 1
     if n <= 0 :
@@ -11,7 +23,12 @@ def g (n) :
     product *= (-2)**n
     return int(product)
 
+@functools.lru_cache()
 def composition(n):
+    """Return a list of potential compositions with lowest value 1
+    totalling n
+    """
+    result = []
     a = [0 for i in range(n + 1)]
     k = 1
     a[0] = 0
@@ -26,9 +43,13 @@ def composition(n):
             y -= x
             k += 1
         a[k] = x + y
-        yield a[:k + 1]
+        result.append(a[:k + 1])
+    return result
 
 def multinomial(n, coeffs):
+    """Multinomial coefficient - n choose coeffs
+    n! divided by the product of e! for e in coeffs
+    """
     nfac = math.factorial(n)
     product = 1
     for i in coeffs:
@@ -41,6 +62,7 @@ def compo_product(compo, n):
         total *= g(i)
     return total
 
+@functools.lru_cache()
 def inner_sum(n, k):
     total = 0
     for c in composition(n):
@@ -48,13 +70,16 @@ def inner_sum(n, k):
             total += compo_product(c, n)
     return total
 
-def tree_gen_rec(size):
+def tree_gen_rec(size, id_gen):
+    """Recursively form a silhouette of a general tree of given size
+    Use generator id_gen to differentiate nodes amongst themselves
+    """
     if size == 0:
-        return { 'leaf': True, 'tag': -1 }
+        raise Exception('You asked for a zero-size general tree.')
     if size == 1:
-        return { 'terminal': True, 'tag': -1 }
+        return { 'terminal': True, 'tag': -1, 'id': next(id_gen) }
     if size == 2:
-        return { 'children': [{'terminal': True, 'tag': -1 }], 'tag': -1}
+        return { 'children': [{'terminal': True, 'tag': -1, 'id': next(id_gen) }], 'tag': -1, 'id': next(id_gen)}
 
     rand = random.randrange(g(size) - 1)
 
@@ -69,10 +94,7 @@ def tree_gen_rec(size):
 
     # on a trouvé le k
     # on doit trouver la bonne composition
-    compos = []
-    for comp in composition(size - 1):
-        if len(comp) == k:
-            compos.append(comp)
+    compos = [x for x in composition(size-1) if len(x) == k]
 
     i = 0
     while i < len(compos):
@@ -84,12 +106,15 @@ def tree_gen_rec(size):
         i += 1
 
     # On a trouvé la composition: compo[i]
-    children = [tree_gen_rec(x) for x in compos[i]]
-    return {'children': children, 'tag': -1}
+    children = [tree_gen_rec(x, id_gen) for x in compos[i]]
+    return {'children': children, 'tag': -1, 'id': next(id_gen)}
 
 def tree_gen(size):
-    tree = tree_gen_rec(size)
-    print(tree_size(tree))
+    """Handle calls to the recursive silhouette generator, and tag the resulting
+    tree silhouette for and increasingly tagged general tree
+    """
+    id_gen = id_generator()
+    tree = tree_gen_rec(size, id_gen)
     tag_tree(tree)
     return tree
 
@@ -117,10 +142,8 @@ def gen_dot(tree, fname):
 
 def tag_tree(tree):
     """Tag a general tree to make it an increasingly tagged general tree
+    A.k.a. your basic prefix run, with a random twist
     """
-
-    print(tree)
-
     root_stack = [tree]
     end_stack = []
     i = 0
@@ -131,16 +154,15 @@ def tag_tree(tree):
         i += 1
         if 'children' in e:
             root_stack += e['children']
-
-    print("Number of elements visited: " + str(i))
     i = 1
     for e in end_stack:
         e['tag'] = i
         i+= 1
 
-    print(tree)
-
 def tree_size(tree):
+    """The size of given general tree, which may only contain terminal nodes
+    and inner nodes with children
+    """
     if not tree:
         return 0
     if 'terminal' in tree:
@@ -151,39 +173,3 @@ def tree_size(tree):
 if __name__ == '__main__':
     tree = tree_gen(15)
     gen_dot(tree, 'tree.dot')
-
-
-
-{'children': [
-    {'tag': -1, 'children': [
-        {'terminal': True, 'tag': -1}]}, 
-    {'children': [
-        {'terminal': True, 'tag': -1}, 
-        {'terminal': True, 'tag': -1}, 
-        {'terminal': True, 'tag': -1}, 
-        {'terminal': True, 'tag': -1}, 
-        {'terminal': True, 'tag': -1}, 
-        {'terminal': True, 'tag': -1}, 
-        {'tag': -1, 'children': [
-            {'terminal': True, 'tag': -1}]}, 
-        {'terminal': True, 'tag': -1}]}, 
-    {'terminal': True, 'tag': -1}, 
-    {'terminal': True, 'tag': -1}]}
-
-
-
-{'tag': 1, 'children': [
-    {'tag': 3, 'children': [
-        {'terminal': True, 'tag': 4}]}, 
-    {'tag': 5, 'children': [
-        {'terminal': True, 'tag': -1}, 
-        {'terminal': True, 'tag': -1}, 
-        {'terminal': True, 'tag': 9}, 
-        {'terminal': True, 'tag': -1}, 
-        {'terminal': True, 'tag': 8}, 
-        {'terminal': True, 'tag': 13}, 
-        {'tag': 10, 'children': [
-            {'terminal': True, 'tag': 15}]}, 
-        {'terminal': True, 'tag': 14}]}, 
-    {'terminal': True, 'tag': 2}, 
-    {'terminal': True, 'tag': -1}]}
