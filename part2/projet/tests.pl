@@ -9,9 +9,9 @@ $| = 1;
 use Time::HiRes qw( time );
 
 
-open my $FPOUT, '>', 'results.csv';
+open my $FPOUT, '>', 'results_cached.csv';
 
-for my $size ( 1 .. 40 ) {
+for my $size ( 1 .. 22 ) {
     my $time = time;
     my $i;
     for ($i = 1; $i <= 20; $i++){
