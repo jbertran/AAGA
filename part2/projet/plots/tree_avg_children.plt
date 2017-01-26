@@ -1,6 +1,6 @@
 # Output
-set terminal pdf enhanced font "arial,10" fontscale 1.0 size 640, 480
-set output 'imgs/tree_avg_children.pdf'
+set terminal svg enhanced font "arial,10" size 300, 300
+set output 'imgs/tree_avg_children.svg'
 
 set key left top
 set title 'Average number of node children with respect to tree size'

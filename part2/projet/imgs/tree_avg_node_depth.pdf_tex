@@ -1,0 +1,71 @@
+%% Creator: Inkscape inkscape 0.48.5, www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'tree_avg_node_depth.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{242.27367187bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.99061527)%
+    \put(0,0){\includegraphics[width=\unitlength]{tree_avg_node_depth.pdf}}%
+    \put(0.17665972,0.14628086){\makebox(0,0)[rb]{\smash{0}}}%
+    \put(0.17665972,0.26020161){\makebox(0,0)[rb]{\smash{0.5}}}%
+    \put(0.17665972,0.37412237){\makebox(0,0)[rb]{\smash{1}}}%
+    \put(0.17665972,0.48804313){\makebox(0,0)[rb]{\smash{1.5}}}%
+    \put(0.17665972,0.60163368){\makebox(0,0)[rb]{\smash{2}}}%
+    \put(0.17665972,0.71555443){\makebox(0,0)[rb]{\smash{2.5}}}%
+    \put(0.17665972,0.82947519){\makebox(0,0)[rb]{\smash{3}}}%
+    \put(0.19977408,0.09675009){\makebox(0,0)[b]{\smash{0}}}%
+    \put(0.31996873,0.09675009){\makebox(0,0)[b]{\smash{5}}}%
+    \put(0.44016339,0.09675009){\makebox(0,0)[b]{\smash{10}}}%
+    \put(0.56035804,0.09675009){\makebox(0,0)[b]{\smash{15}}}%
+    \put(0.68055269,0.09675009){\makebox(0,0)[b]{\smash{20}}}%
+    \put(0.80074735,0.09675009){\makebox(0,0)[b]{\smash{25}}}%
+    \put(0.920942,0.09675009){\makebox(0,0)[b]{\smash{30}}}%
+    \put(0.04854015,0.49993051){\rotatebox{90}{\makebox(0,0)[b]{\smash{Average node depth}}}}%
+    \put(0.56035804,0.02245395){\makebox(0,0)[b]{\smash{Size}}}%
+    \put(0.56035804,0.90377134){\makebox(0,0)[b]{\smash{Average depth of nodes with respect to tree size}}}%
+  \end{picture}%
+\endgroup%

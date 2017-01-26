@@ -222,16 +222,20 @@ def generate_data(sample_size):
             i = 1
             start = timer()
             tree_tab[size] = []
+            times = []
             while i <= sample_size:
                 printret("Generating size %d tree %d/%d" % (size, i, sample_size))
                 tree = tree_gen(size)
                 tree_tab[size].append(tree)
+                if not time.get('size'):
+                    time[size] = [(timer() - start) / float(i)]
+                else:
+                    time[size].append((timer() - start) / float(i))
                 if (timer() - start >= 120):
                     print("Timeout, abandoning size %d" % size)
                     break
                 i += 1
-                time[size] = (timer() - start) / float(i)
-                f.write('%d, %.5f\n' % (size, time[size]))
+            f.write('%d, %.5f\n' % (size, sum(time[size])/float(len(time[size]))))
 
     with open('data/avg_depth.csv', 'w') as f:
         for size, trees in tree_tab.items():
@@ -246,4 +250,10 @@ def generate_data(sample_size):
             f.write('%d, %.5f\n' % (size, sum(map(lambda x: tree_avg_node_depth(x), trees))/len(trees)))
 
 if __name__ == '__main__':
-    print(inner_sum(19, 2))
+    size = int(input())
+    while size > 25 or size < 0:
+        print("In the interest of time, we recommend generating a tree of size [10..20]")
+        size = int(input())
+    tree = tree_gen(size)
+    dot_gen(tree, "tree.dot")
+    print("Tree of size %d generated in 'tree.dot'" % size)
